@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.jesusruiz.washingagenda.navigation.NavManager
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 import com.jesusruiz.washingagenda.views.LoginView
 
@@ -20,7 +21,7 @@ class MainActivity : ComponentActivity() {
         setContent {
                 WashingAgendaTheme(){
                     Surface(modifier = Modifier.fillMaxSize()) {
-                        LoginView()
+                        NavManager()
                     }
             }
         }

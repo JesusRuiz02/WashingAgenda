@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -20,13 +22,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.R
 
 @Composable
-fun LoginView(){
+fun LoginView(navController: NavController){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -41,8 +45,8 @@ fun LoginView(){
                 style = LocalTextStyle.current.copy(color = Color.White)
             )},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
-            colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Green,
-                unfocusedContainerColor = Color.Green)
+            colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
+                unfocusedContainerColor = colorResource(id = R.color.dark_green))
         )
         OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp).fillMaxWidth(),
             value = password,
@@ -51,8 +55,17 @@ fun LoginView(){
                 style = LocalTextStyle.current.copy(color = Color.White)
             )},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
-            colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = Color.Green,
-                unfocusedContainerColor = Color.Green))
+            colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
+                unfocusedContainerColor =colorResource(id = R.color.dark_green)))
+        Button(onClick = {navController.navigate("Home") }, modifier = Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp).fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.dark_green)
+            )) {
+            Text(text = "Login",
+                style = LocalTextStyle.current.copy(color = Color.White)
+            )
+
+        }
 
     }
 }
