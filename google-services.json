@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "908867380430",
+    "project_id": "washingschedule-1adee",
+    "storage_bucket": "washingschedule-1adee.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:908867380430:android:c2a830cef63347460c1c9f",
+        "android_client_info": {
+          "package_name": "com.jesusruiz.washingagenda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABAbaR-EyuXfRUQTFHH5ekgIC-SZhlAjw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

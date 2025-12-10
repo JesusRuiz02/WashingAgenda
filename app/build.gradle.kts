@@ -54,6 +54,8 @@ dependencies {
     implementation(libs.navigation)
     implementation(libs.kalendar)
     implementation(libs.kalendarfoundation)
+    implementation(libs.firebaseAuth)
+    implementation(libs.firebaseFirestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
