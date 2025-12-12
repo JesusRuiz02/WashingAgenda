@@ -13,7 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.jesusruiz.washingagenda.navigation.NavManager
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 import com.jesusruiz.washingagenda.views.LoginView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

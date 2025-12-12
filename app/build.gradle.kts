@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt)
+    kotlin("kapt")
 }
 
 android {
@@ -30,11 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -42,6 +44,9 @@ android {
 }
 
 dependencies {
+    constraints {
+        implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.8.0")
+    }
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -55,6 +60,10 @@ dependencies {
     implementation(libs.kalendar)
     implementation(libs.kalendarfoundation)
     implementation(libs.firebaseAuth)
+    implementation(libs.hilt)
+    kapt(libs.hiltCompiler)
+    implementation(libs.hiltCompose)
+    implementation(libs.hiltNavCompose)
     implementation(libs.firebaseFirestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

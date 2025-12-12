@@ -28,11 +28,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.R
+import com.jesusruiz.washingagenda.viewModel.LoginViewModel
 
 @Composable
-fun LoginView(navController: NavController){
+fun LoginView(navController: NavController, loginVM: LoginViewModel){
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val state = loginVM.uiState
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(100.dp))
         Image(modifier = Modifier.height(200.dp).width(200.dp).padding(20.dp),
@@ -57,7 +59,16 @@ fun LoginView(navController: NavController){
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
             colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
                 unfocusedContainerColor =colorResource(id = R.color.dark_green)))
-        Button(onClick = {navController.navigate("Home") }, modifier = Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp).fillMaxWidth(),
+        Button(onClick = { loginVM.alternativeLogin(email){
+            if (state.isAdmin)
+            {
+               navController.navigate("Admin")
+            }
+            else{
+                navController.navigate("Home")
+            }
+          }
+            }, modifier = Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp).fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.dark_green)
             )) {
