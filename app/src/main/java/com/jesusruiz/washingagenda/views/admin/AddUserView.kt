@@ -1,5 +1,6 @@
 package com.jesusruiz.washingagenda.views.admin
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,17 +31,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.viewModel.LoginViewModel
+import com.jesusruiz.washingagenda.viewModel.RegisterViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddUserView(navController: NavController, loginVM: LoginViewModel)
+fun AddUserView(navController: NavController, registerViewModel: RegisterViewModel)
 {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var name by remember { mutableStateOf("") }
-    var departmentN by remember { mutableStateOf("") }
-    var building by remember { mutableStateOf("") }
-    val state = loginVM.uiState
+
     Scaffold(topBar = {
         TopAppBar(title = {
             Text(text ="Agregar Inquilino" )},
@@ -52,8 +49,12 @@ fun AddUserView(navController: NavController, loginVM: LoginViewModel)
         })
     })
     { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally){
+        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()){
+            var email by remember { mutableStateOf("") }
+            var password by remember { mutableStateOf("") }
+            var name by remember { mutableStateOf("") }
+            var departmentN by remember { mutableStateOf("") }
+            var building by remember { mutableStateOf("") }
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                 value = name,
                 onValueChange = {name = it},
@@ -95,16 +96,6 @@ fun AddUserView(navController: NavController, loginVM: LoginViewModel)
                     unfocusedContainerColor = colorResource(id = R.color.dark_green))
             )
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
-                value = building,
-                onValueChange = {building = it},
-                label = { Text(text = "Edificio",
-                    style = LocalTextStyle.current.copy(color = Color.White)
-                )},
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text ),
-                colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green))
-            )
-            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                 value = departmentN,
                 onValueChange = {departmentN = it},
                 label = { Text(text = "Número de Departamento",
@@ -115,7 +106,7 @@ fun AddUserView(navController: NavController, loginVM: LoginViewModel)
                     unfocusedContainerColor = colorResource(id = R.color.dark_green))
             )
             Button(onClick = {
-
+               registerViewModel.addUser(name,email,password,departmentN,building) { navController.popBackStack() }
             }) {
                 Text(text = "Agregar inquilino")
             }

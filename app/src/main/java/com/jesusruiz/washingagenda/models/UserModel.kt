@@ -5,4 +5,5 @@ data class UserModel(val userID: String,
                      val name:String,
                      val departmentN: String,
                      val email: String,
-                     val building: String)
+                     val building: String,
+                     val hours: Int)
