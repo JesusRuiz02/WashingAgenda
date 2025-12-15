@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.google.services)
     kotlin("kapt")
 }
 
@@ -43,11 +44,12 @@ android {
     }
 }
 
+kapt {
+    correctErrorTypes = true
+}
+
 dependencies {
-    constraints {
-        implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.8.0")
-    }
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.7.1")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -58,12 +60,12 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.navigation)
     implementation(libs.kalendar)
+    implementation(platform(libs.firebaseBom))
     implementation(libs.kalendarfoundation)
     implementation(libs.firebaseAuth)
     implementation(libs.hilt)
     kapt(libs.hiltCompiler)
     implementation(libs.hiltCompose)
-    implementation(libs.hiltNavCompose)
     implementation(libs.firebaseFirestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

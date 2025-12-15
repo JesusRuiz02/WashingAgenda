@@ -13,9 +13,10 @@ kalendarV = "1.3.2"
 kalendarFoundationV = "1.0.0"
 firebaseAuthV = "24.0.1"
 firebaseFirestoreV = "26.0.2"
-hiltV = "2.52"
+hiltV = "2.57.1"
 hiltCompose = "1.1.0"
-hiltNavComposeV = "2.8.0"
+googleServices = "4.4.2"
+firebaseBomV = "34.7.0"
 
 
 
@@ -41,9 +42,9 @@ kalendar = { module = "com.himanshoe:kalendar", version.ref = "kalendarV" }
 kalendarfoundation = { module = "com.himanshoe:kalendar-foundation", version.ref = "kalendarFoundationV" }
 firebaseAuth={group="com.google.firebase", name="firebase-auth", version.ref="firebaseAuthV"}
 firebaseFirestore={group="com.google.firebase", name="firebase-firestore", version.ref="firebaseFirestoreV"}
+firebaseBom = {group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBomV"}
 hilt = {group= "com.google.dagger", name = "hilt-android", version.ref = "hiltV"}
 hiltCompiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltV" }
-hiltNavCompose = {group = "androidx.navigation", name = "navigation-compose", version.ref= "hiltNavComposeV"}
 hiltCompose = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref="hiltCompose"}
 
 
@@ -52,6 +53,6 @@ hiltCompose = {group = "androidx.hilt", name = "hilt-navigation-compose", versio
 hilt = {id = "com.google.dagger.hilt.android", version.ref = "hiltV"}
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices"}
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 

@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -51,7 +52,8 @@ fun AddUserView(navController: NavController, loginVM: LoginViewModel)
         })
     })
     { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth()){
+        Column(modifier = Modifier.padding(paddingValues).fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally){
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                 value = name,
                 onValueChange = {name = it},

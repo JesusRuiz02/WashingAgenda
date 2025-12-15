@@ -1,6 +1,7 @@
 package com.jesusruiz.washingagenda.views
 
-import kotlinx.datetime.Clock
+
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import androidx.compose.foundation.background
@@ -21,7 +22,7 @@ import kotlinx.datetime.todayIn
 @Composable
 fun HomeView(navController: NavController)
 {
-    Column (modifier = Modifier.wrapContentSize().background(Color.LightGray)) {
+    /**Column (modifier = Modifier.wrapContentSize().background(Color.LightGray)) {
         Kalendar(
             currentDay = Clock.System.todayIn(TimeZone.currentSystemDefault()),
             modifier = Modifier.fillMaxWidth(),
@@ -33,5 +34,5 @@ fun HomeView(navController: NavController)
 
             },
         )
-    }
+    }**/
 }
