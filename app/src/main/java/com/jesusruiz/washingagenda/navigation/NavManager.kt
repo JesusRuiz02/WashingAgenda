@@ -5,7 +5,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 import com.jesusruiz.washingagenda.viewModel.LoginViewModel
+import com.jesusruiz.washingagenda.viewModel.RegisterViewModel
 import com.jesusruiz.washingagenda.views.HomeView
 import com.jesusruiz.washingagenda.views.LoginView
 import com.jesusruiz.washingagenda.views.admin.AddUserView
@@ -35,12 +37,12 @@ fun NavManager()
             HomeView(navController)
         }
         composable(Screen.Admin.route) {
-            val loginViewModel: LoginViewModel = hiltViewModel()
-            AdminPanelView(navController, loginViewModel)
+            val adminViewModel: AdminViewModel = hiltViewModel()
+            AdminPanelView(navController, adminViewModel)
         }
         composable(Screen.AddUser.route) {
-            val loginViewModel: LoginViewModel = hiltViewModel()
-            AddUserView(navController, loginViewModel)
+            val registerViewModel: RegisterViewModel = hiltViewModel()
+            AddUserView(navController, registerViewModel)
         }
     }
 }

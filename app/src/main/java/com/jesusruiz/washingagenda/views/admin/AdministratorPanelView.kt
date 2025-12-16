@@ -1,10 +1,10 @@
 package com.jesusruiz.washingagenda.views.admin
 
-import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -16,14 +16,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.jesusruiz.washingagenda.viewModel.LoginViewModel
+import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminPanelView(navController: NavController, loginViewModel: LoginViewModel){
+fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel){
+    LaunchedEffect(Unit) {
+        adminViewModel.getUsers()
+    }
     Scaffold(topBar = {TopAppBar(title = {Text(text = "Admin Panel")},
         navigationIcon ={
             IconButton(onClick = {
@@ -35,11 +39,19 @@ fun AdminPanelView(navController: NavController, loginViewModel: LoginViewModel)
         })}
     ){ paddingValues ->
         Column(modifier = Modifier.padding(paddingValues), horizontalAlignment = Alignment.CenterHorizontally) {
+            val users = adminViewModel.adminState.users
+           LazyColumn() {
+               items(users){
+                   user ->
+                   Text(text = user.name)
+               }
+           }
             Button(onClick = {
                 navController.navigate("AddUser")
-                 }) {
+            }) {
                 Text(text = "Agregar usuario")
             }
         }
+
     }
 }

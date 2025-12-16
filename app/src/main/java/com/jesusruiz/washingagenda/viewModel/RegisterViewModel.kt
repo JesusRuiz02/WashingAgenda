@@ -35,32 +35,26 @@ class RegisterViewModel @Inject constructor(
          }
     }
 
-    fun saveUser(name: String, department: String, building: String)
+    private suspend fun saveUser(name: String, department: String, building: String)
     {
-        val id = auth.currentUser?.uid
-        val email = auth.currentUser?.email
+        val id = auth.currentUser?.uid ?: return
+        val email = auth.currentUser?.email ?: return
 
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
                 val user = UserModel(userID = id.toString(),
-                    email = email.toString(),
+                    email = email,
                     name = name,
                     building = building,
                     departmentN = department,
                     hours = 10,
-                    userType = "host")
-
-                FirebaseFirestore.getInstance()
+                    userType = "host",
+                    adminBuildingsIds = emptyList())
+                    firestore
                     .collection("Users")
-                    .document(user.userID)
+                    .document(id)
                     .set(user)
                     .await()
                 Log.d("Success", "User is saved")
-            }
-            catch (e: Exception)
-            {
-                Log.e("Error", "Error al guardar usuario ${e.localizedMessage}", e)
-            }
-        }
     }
+
+
 }

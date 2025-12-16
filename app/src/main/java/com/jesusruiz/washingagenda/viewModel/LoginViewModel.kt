@@ -65,7 +65,7 @@ class LoginViewModel @Inject constructor(
                         if(task.isSuccessful)
                         {
 
-                            if(user == "admin")
+                            if(user == "admin@gmail.com")
                             {
                                 uiState.isAdmin = true
                                 Log.d("admin", "el admin inicio sesión")

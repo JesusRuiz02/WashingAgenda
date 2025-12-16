@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -30,7 +29,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.R
-import com.jesusruiz.washingagenda.viewModel.LoginViewModel
 import com.jesusruiz.washingagenda.viewModel.RegisterViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,52 +56,57 @@ fun AddUserView(navController: NavController, registerViewModel: RegisterViewMod
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                 value = name,
                 onValueChange = {name = it},
-                label = { Text(text = "Nombre",
-                    style = LocalTextStyle.current.copy(color = Color.White)
-                )},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text ),
-                colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = colorResource(id = R.color.dark_green),
                     unfocusedContainerColor = colorResource(id = R.color.dark_green))
             )
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                 value = email,
                 onValueChange = {email = it},
-                label = { Text(text = "Email",
-                    style = LocalTextStyle.current.copy(color = Color.White)
-                )},
+                label = { Text(text = "Email")},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
-                colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green))
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = colorResource(id = R.color.dark_green),
+                    unfocusedContainerColor = colorResource(id = R.color.dark_green),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White)
                 )
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                 value = password,
                 onValueChange = {password = it},
-                label = { Text(text = "Contraseña",
-                    style = LocalTextStyle.current.copy(color = Color.White)
-                )},
+                label = { Text(text = "Contraseña")},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
-                colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green))
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = colorResource(id = R.color.dark_green),
+                    unfocusedContainerColor = colorResource(id = R.color.dark_green),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White)
             )
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                 value = building,
                 onValueChange = {building = it},
-                label = { Text(text = "Edificio",
-                    style = LocalTextStyle.current.copy(color = Color.White)
+                label = { Text(text = "Edificio"
                 )},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text ),
-                colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green))
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White,
+                    focusedContainerColor = colorResource(id = R.color.dark_green),
+                    unfocusedContainerColor = colorResource(id = R.color.dark_green),)
             )
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                 value = departmentN,
                 onValueChange = {departmentN = it},
-                label = { Text(text = "Número de Departamento",
-                    style = LocalTextStyle.current.copy(color = Color.White)
-                )},
+                label = { Text(text = "Número de Departamento")},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number ),
-                colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green))
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedContainerColor = colorResource(id = R.color.dark_green),
+                    unfocusedContainerColor = colorResource(id = R.color.dark_green),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White)
             )
             Button(onClick = {
                registerViewModel.addUser(name,email,password,departmentN,building) { navController.popBackStack() }

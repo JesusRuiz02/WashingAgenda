@@ -59,7 +59,7 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
             colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
                 unfocusedContainerColor =colorResource(id = R.color.dark_green)))
-        Button(onClick = { loginVM.alternativeLogin(email){
+        Button(onClick = { loginVM.login(email, password){
             if (state.isAdmin)
             {
                navController.navigate("Admin")
