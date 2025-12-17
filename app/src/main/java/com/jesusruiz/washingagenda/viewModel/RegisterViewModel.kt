@@ -46,8 +46,8 @@ class RegisterViewModel @Inject constructor(
                     building = building,
                     departmentN = department,
                     hours = 10,
-                    userType = "host",
-                    adminBuildingsIds = emptyList())
+                    role = "host",
+                    adminBuilding = emptyList())
                     firestore
                     .collection("Users")
                     .document(id)

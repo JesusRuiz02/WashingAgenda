@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.jesusruiz.washingagenda.items.UserCard
 import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,8 +44,10 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
            LazyColumn() {
                items(users){
                    user ->
-                   Text(text = user.name)
-               }
+                   UserCard(name = user.name, department = user.departmentN, building = user.building, hours = user.hours)
+                   {
+                       //navController.navigate("EditUser/${user.userID}")
+                   } }
            }
             Button(onClick = {
                 navController.navigate("AddUser")

@@ -50,8 +50,9 @@ class AdminViewModel @Inject constructor(
                     .get()
                     .await()
                 val user = doc.toObject(UserModel::class.java) ?: return@launch
-                val adminBuildings = user.adminBuildingsIds.orEmpty()
-                if (adminBuildings.isNotEmpty()) return@launch
+                val adminBuildings = user.adminBuilding.orEmpty()
+                Log.d("users", user.adminBuilding.toString())
+                if (adminBuildings.isEmpty()) return@launch
                 getUsersByBuilding(adminBuildings)
             }
             catch (e: Exception)
@@ -74,7 +75,7 @@ class AdminViewModel @Inject constructor(
                 .await()
             users += query.toObjects(UserModel::class.java)
         }
-        Log.d("users", users.toString())
+
         adminState = adminState.copy(users = users)
     }
 }
