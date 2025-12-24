@@ -5,21 +5,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.jesusruiz.washingagenda.login.CheckSessionView
 import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 import com.jesusruiz.washingagenda.viewModel.LoginViewModel
 import com.jesusruiz.washingagenda.viewModel.RegisterViewModel
 import com.jesusruiz.washingagenda.views.HomeView
-import com.jesusruiz.washingagenda.views.LoginView
+import com.jesusruiz.washingagenda.login.LoginView
+import com.jesusruiz.washingagenda.viewModel.CheckSessionViewModel
 import com.jesusruiz.washingagenda.views.admin.AddUserView
 import com.jesusruiz.washingagenda.views.admin.AdminPanelView
 
 
 sealed class Screen(val route: String)
 {
+    data object CheckSession: Screen("CheckSession")
     data object Login : Screen("Login")
     data object Admin : Screen("Admin")
     data object Home : Screen("Home")
-    data object Calendar : Screen("Calendar/{userId}")
     data object AddUser: Screen("AddUser")
 
 }
@@ -28,10 +30,14 @@ sealed class Screen(val route: String)
 fun NavManager()
 {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "Login"){
+    NavHost(navController = navController, startDestination = "CheckSession"){
         composable(Screen.Login.route) {
             val loginVM: LoginViewModel = hiltViewModel()
             LoginView(navController, loginVM)
+        }
+        composable(Screen.CheckSession.route) {
+            val checkSessionViewModel: CheckSessionViewModel = hiltViewModel()
+            CheckSessionView(navController, checkSessionViewModel)
         }
         composable(Screen.Home.route) {
             HomeView(navController)

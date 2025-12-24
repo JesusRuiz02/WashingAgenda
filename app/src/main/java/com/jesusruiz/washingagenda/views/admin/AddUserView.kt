@@ -11,7 +11,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -53,7 +52,7 @@ fun AddUserView(navController: NavController, registerViewModel: RegisterViewMod
             var name by remember { mutableStateOf("") }
             var departmentN by remember { mutableStateOf("") }
             var building by remember { mutableStateOf("") }
-            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
+            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth(),
                 value = name,
                 onValueChange = {name = it},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text ),
@@ -63,7 +62,7 @@ fun AddUserView(navController: NavController, registerViewModel: RegisterViewMod
                     focusedContainerColor = colorResource(id = R.color.dark_green),
                     unfocusedContainerColor = colorResource(id = R.color.dark_green))
             )
-            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
+            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth(),
                 value = email,
                 onValueChange = {email = it},
                 label = { Text(text = "Email")},
@@ -74,7 +73,7 @@ fun AddUserView(navController: NavController, registerViewModel: RegisterViewMod
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White)
                 )
-            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
+            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth(),
                 value = password,
                 onValueChange = {password = it},
                 label = { Text(text = "Contraseña")},
@@ -85,7 +84,7 @@ fun AddUserView(navController: NavController, registerViewModel: RegisterViewMod
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White)
             )
-            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
+            OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth(),
                 value = building,
                 onValueChange = {building = it},
                 label = { Text(text = "Edificio"

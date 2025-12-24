@@ -8,8 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.jesusruiz.washingagenda.models.UserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -30,57 +32,49 @@ class LoginViewModel @Inject constructor(
         private set
 
     sealed class LoginInputAction{
-        data class isAdminChanged(val value: Boolean) : LoginInputAction()
+        data class IsAdminChanged(val value: Boolean) : LoginInputAction()
     }
 
     fun onAction(action : LoginInputAction){
         when(action){
-            is LoginInputAction.isAdminChanged -> {
+            is LoginInputAction.IsAdminChanged -> {
                 print("hola")
             }
         }
     }
 
-    fun alternativeLogin(user: String, onSuccess: () -> Unit)
-    {
-        if (user == "Admin"){
-            uiState.isAdmin = true
-        }
-        else{
-            uiState.isAdmin = false
-        }
-        onSuccess()
-    }
 
-
-
-
-    fun login(user: String, password: String, onSuccess: () -> Unit)
+    fun login(user: String, password: String, isAdmin: () -> Unit, isUser: () -> Unit)
     {
         viewModelScope.launch{
             try {
-                auth.signInWithEmailAndPassword(user,password)
-                    .addOnCompleteListener {
-                        task ->
-                        if(task.isSuccessful)
-                        {
+                auth.signInWithEmailAndPassword(user,password).await()
+                           val role = getRole()
+                           if(role == "admin")
+                           {
+                               isAdmin()
+                           }
+                           else
+                           {
+                               isUser()
+                           }
 
-                            if(user == "admin@gmail.com")
-                            {
-                                uiState.isAdmin = true
-                                Log.d("admin", "el admin inicio sesión")
-                            }
-                             onSuccess()
-                        }
-                    }
-                    .addOnFailureListener {
-                            Log.d("Error", "No se pudo iniciar sesión" )
-                    }
             }
             catch (e : Exception)
             {
-
+                Log.e("Login" , "Error", e)
             }
         }
+    }
+
+    private suspend fun getRole() : String?{
+        val uid = auth.currentUser?.uid
+        val doc = firestore
+            .collection("Users")
+            .document(uid.toString())
+            .get()
+            .await()
+        val user = doc.toObject(UserModel::class.java)
+        return (user?.role)
     }
 }

@@ -1,4 +1,4 @@
-package com.jesusruiz.washingagenda.views
+package com.jesusruiz.washingagenda.login
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
@@ -47,27 +47,26 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
                 style = LocalTextStyle.current.copy(color = Color.White)
             )},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
-            colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
-                unfocusedContainerColor = colorResource(id = R.color.dark_green))
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = colorResource(id = R.color.dark_green),
+                unfocusedContainerColor = colorResource(id = R.color.dark_green),
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White)
         )
         OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp).fillMaxWidth(),
             value = password,
             onValueChange = {password = it},
-            label = { Text(text = "Password",
-                style = LocalTextStyle.current.copy(color = Color.White)
+            label = { Text(text = "Password"
             )},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
-            colors = OutlinedTextFieldDefaults.colors(focusedContainerColor = colorResource(id = R.color.dark_green),
-                unfocusedContainerColor =colorResource(id = R.color.dark_green)))
-        Button(onClick = { loginVM.login(email, password){
-            if (state.isAdmin)
-            {
-               navController.navigate("Admin")
-            }
-            else{
-                navController.navigate("Home")
-            }
-          }
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = colorResource(id = R.color.dark_green),
+                unfocusedContainerColor = colorResource(id = R.color.dark_green),
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White))
+        Button(onClick = { loginVM.login(email, password,
+            { navController.navigate("Admin")},
+            {navController.navigate("Home")})
             }, modifier = Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp).fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.dark_green)

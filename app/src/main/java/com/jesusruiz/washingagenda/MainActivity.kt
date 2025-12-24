@@ -1,7 +1,6 @@
 package com.jesusruiz.washingagenda
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -13,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.jesusruiz.washingagenda.navigation.NavManager
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
-import com.jesusruiz.washingagenda.views.LoginView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
