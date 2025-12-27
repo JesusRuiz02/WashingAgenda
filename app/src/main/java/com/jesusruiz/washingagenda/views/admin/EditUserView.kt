@@ -18,6 +18,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,10 +30,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.R
+import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditUserView(idUser: String, navController : NavController){
+fun EditUserView(idUser: String, navController : NavController, adminViewModel: AdminViewModel){
+    val state = adminViewModel.adminState
+    LaunchedEffect(Unit) {
+        adminViewModel.getUserById(idUser)
+    }
     Scaffold(topBar = {TopAppBar(title = {Text(text = "Editar usuario")},
         navigationIcon ={
             IconButton(onClick = {
@@ -51,8 +57,8 @@ fun EditUserView(idUser: String, navController : NavController){
         Column(Modifier.padding(paddingValues)) {
             OutlinedTextField(
                 modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
-                value = name,
-                onValueChange = { name = it },
+                value = state.editUser.name,
+                onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.NameChanged(it)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
@@ -63,9 +69,11 @@ fun EditUserView(idUser: String, navController : NavController){
             )
             OutlinedTextField(
                 modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
-                value = email,
-                onValueChange = { email = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                value = state.editUser.hours.toString(),
+                onValueChange = {
+                    val value = it.toIntOrNull() ?: 0
+                    adminViewModel.onAction(AdminViewModel.AdminInputAction.HoursChanged(value)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
@@ -75,8 +83,8 @@ fun EditUserView(idUser: String, navController : NavController){
             )
             OutlinedTextField(
                 modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
-                value = building,
-                onValueChange = { building = it },
+                value = state.editUser.building,
+                onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.BuildingChanged(it)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
@@ -87,8 +95,8 @@ fun EditUserView(idUser: String, navController : NavController){
             )
             OutlinedTextField(
                 modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
-                value = department,
-                onValueChange = { department = it },
+                value = state.editUser.departmentN,
+                onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.DepartmentChanged(it)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
@@ -97,18 +105,7 @@ fun EditUserView(idUser: String, navController : NavController){
                     unfocusedContainerColor = colorResource(id = R.color.dark_green)
                 )
             )
-            OutlinedTextField(
-                modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
-                value = hours,
-                onValueChange = { hours = it },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green)
-                )
-            )
+
             Button(onClick = { /*TODO*/ },
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
@@ -118,7 +115,8 @@ fun EditUserView(idUser: String, navController : NavController){
             Button(onClick = { /*TODO*/ },
                 shape = RoundedCornerShape(10.dp),
                 modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green))) {
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green)))
+            {
                 Text(text = "Guardar cambios", color = Color.White)
             }
 

@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -19,7 +20,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
+import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.items.UserCard
 import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 
@@ -32,7 +35,8 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
     Scaffold(topBar = {TopAppBar(title = {Text(text = "Admin Panel")},
         navigationIcon ={
             IconButton(onClick = {
-                navController.popBackStack()
+                adminViewModel.logOut()
+                navController.navigate("Login")
             }) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Go back")
@@ -46,12 +50,13 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
                    user ->
                    UserCard(name = user.name, department = user.departmentN, building = user.building, hours = user.hours)
                    {
-                       //navController.navigate("EditUser/${user.userID}")
+                       navController.navigate("EditUser/${user.userID}")
                    } }
            }
             Button(onClick = {
-                navController.navigate("AddUser")
-            }) {
+                navController.navigate("AddUser") },
+                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green)))
+            {
                 Text(text = "Agregar usuario")
             }
         }
