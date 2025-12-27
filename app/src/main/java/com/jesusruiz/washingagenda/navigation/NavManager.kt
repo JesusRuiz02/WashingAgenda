@@ -14,6 +14,8 @@ import com.jesusruiz.washingagenda.login.LoginView
 import com.jesusruiz.washingagenda.viewModel.CheckSessionViewModel
 import com.jesusruiz.washingagenda.views.admin.AddUserView
 import com.jesusruiz.washingagenda.views.admin.AdminPanelView
+import com.jesusruiz.washingagenda.views.admin.EditUserView
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 
 sealed class Screen(val route: String)
@@ -22,6 +24,7 @@ sealed class Screen(val route: String)
     data object Login : Screen("Login")
     data object Admin : Screen("Admin")
     data object Home : Screen("Home")
+    data object Edit: Screen("EditUser")
     data object AddUser: Screen("AddUser")
 
 }
@@ -38,6 +41,10 @@ fun NavManager()
         composable(Screen.CheckSession.route) {
             val checkSessionViewModel: CheckSessionViewModel = hiltViewModel()
             CheckSessionView(navController, checkSessionViewModel)
+        }
+        composable(Screen.Edit.route){
+            val adminViewModel: AdminViewModel = hiltViewModel()
+           // EditUserView(navController, adminViewModel)
         }
         composable(Screen.Home.route) {
             HomeView(navController)
