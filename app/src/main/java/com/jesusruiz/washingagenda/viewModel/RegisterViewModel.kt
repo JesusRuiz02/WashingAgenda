@@ -39,8 +39,7 @@ class RegisterViewModel @Inject constructor(
     {
         val id = auth.currentUser?.uid ?: return
         val email = auth.currentUser?.email ?: return
-
-                val user = UserModel(userID = id.toString(),
+        val user = UserModel(userID = id.toString(),
                     email = email,
                     name = name,
                     building = building,

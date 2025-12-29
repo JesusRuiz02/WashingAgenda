@@ -43,7 +43,12 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
         navigationIcon ={
             IconButton(onClick = {
                 adminViewModel.logOut()
-                navController.navigate("Login")
+                navController.navigate(Screen.Login.route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                    launchSingleTop = true
+                }
             }) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                     contentDescription = "Go back")

@@ -1,5 +1,6 @@
 package com.jesusruiz.washingagenda.views.admin
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -7,8 +8,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,11 +53,6 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
             }
         })}
     ) { paddingValues ->
-        var name by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var building by remember { mutableStateOf("") }
-        var department by remember { mutableStateOf("") }
-        var hours by remember { mutableStateOf("") }
         Column(Modifier.padding(paddingValues)) {
             OutlinedTextField(
                 modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
@@ -81,9 +80,23 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     unfocusedContainerColor = colorResource(id = R.color.dark_green)
                 )
             )
+            var expanded by remember { mutableStateOf(false) }
+            IconButton(onClick = { expanded = !expanded }) {
+                Icon(Icons.Default.MoreVert, contentDescription = "More options")
+            }
+            DropdownMenu(expanded = expanded,
+                onDismissRequest = {expanded = false}) {
+                state.adminBuildings.values.forEach {
+                    building ->
+                    DropdownMenuItem(text = { Text(text = building) },
+                    onClick = {adminViewModel.onAction(AdminViewModel.AdminInputAction.BuildingChanged(building))}
+                    )
+
+                }
+            }
             OutlinedTextField(
                 modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
-                value = state.editUser.building,
+                value = state.adminBuildings[state.editUser.building] ?: "",
                 onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.BuildingChanged(it)) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                 colors = OutlinedTextFieldDefaults.colors(

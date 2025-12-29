@@ -93,7 +93,7 @@ class AdminViewModel @Inject constructor(
             {
                 Log.e("Error", e.message ?: "Error getting users")
             }
-    }
+            }
         }
 
 
@@ -124,7 +124,7 @@ class AdminViewModel @Inject constructor(
     }
 
     suspend fun loadBuildingNames(adminBuildings: List<String>) {
-        val buildingMaps = hashMapOf<String, String>()
+            val buildingMaps = hashMapOf<String, String>()
             try {
                 adminBuildings.chunked(10).forEach { chunk ->
                     val query = firestore
