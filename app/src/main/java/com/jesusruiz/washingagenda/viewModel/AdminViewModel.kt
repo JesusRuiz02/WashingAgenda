@@ -7,11 +7,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
+import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.FirebaseFirestore
 import com.jesusruiz.washingagenda.models.UserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
+
+
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,8 +24,10 @@ class AdminViewModel @Inject constructor(
 ) : ViewModel() {
 
     data class AdminUiState(
+        val isLoading : Boolean = false,
         var users: List<UserModel> = emptyList(),
-        var editUser: UserModel = UserModel()
+        var editUser: UserModel = UserModel(),
+        var adminBuildings : Map<String, String> = emptyMap()
     )
 
     var adminState by mutableStateOf(AdminUiState())
@@ -34,7 +39,6 @@ class AdminViewModel @Inject constructor(
         data class DepartmentChanged(val value: String) : AdminInputAction()
         data class HoursChanged(val value: Int) : AdminInputAction()
         data class BuildingChanged(val value: String) : AdminInputAction()
-
 
     }
 
@@ -67,9 +71,6 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    fun editUser(idUser: String){
-
-    }
 
     fun getUserById(idUser: String){
         viewModelScope.launch{
@@ -79,7 +80,14 @@ class AdminViewModel @Inject constructor(
                     .document(idUser)
                     .get()
                     .await()
-                adminState.editUser = doc.toObject(UserModel::class.java) ?: return@launch
+                val user = doc.toObject(UserModel::class.java)
+                if(user != null)
+                {
+                    adminState = adminState.copy(editUser = user)
+                }
+
+
+                Log.d("user id", idUser)
             }
             catch (e: Exception)
             {
@@ -91,6 +99,7 @@ class AdminViewModel @Inject constructor(
 
     fun getUsers(){
         val uid = auth.currentUser?.uid
+        adminState = adminState.copy(isLoading = true)
         viewModelScope.launch{
             try{
                 val doc = firestore
@@ -99,10 +108,11 @@ class AdminViewModel @Inject constructor(
                     .get()
                     .await()
                 val user = doc.toObject(UserModel::class.java) ?: return@launch
-                val adminBuildings = user.adminBuilding.orEmpty()
-                Log.d("users", user.adminBuilding.toString())
+                val adminBuildings = user.adminBuilding
                 if (adminBuildings.isEmpty()) return@launch
                 getUsersByBuilding(adminBuildings)
+                loadBuildingNames(adminBuildings)
+
             }
             catch (e: Exception)
             {
@@ -111,6 +121,33 @@ class AdminViewModel @Inject constructor(
         }
 
 
+    }
+
+    suspend fun loadBuildingNames(adminBuildings: List<String>) {
+        val buildingMaps = hashMapOf<String, String>()
+            try {
+                adminBuildings.chunked(10).forEach { chunk ->
+                    val query = firestore
+                        .collection("Building")
+                        .whereIn(FieldPath.documentId(), chunk)
+                        .get()
+                        .await()
+
+                   query.documents.forEach { doc ->
+                       val id = doc.id
+                       val name = doc.getString("name") ?: "Sin nombre"
+                       buildingMaps[id] = name
+                   }
+                    adminState = adminState.copy(adminBuildings = buildingMaps)
+
+                }
+            } catch (e: Exception)
+            {
+
+            }
+        finally {
+            adminState = adminState.copy(isLoading = false)
+        }
     }
 
     fun logOut(){

@@ -2,9 +2,11 @@ package com.jesusruiz.washingagenda.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.jesusruiz.washingagenda.login.CheckSessionView
 import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 import com.jesusruiz.washingagenda.viewModel.LoginViewModel
@@ -24,7 +26,10 @@ sealed class Screen(val route: String)
     data object Login : Screen("Login")
     data object Admin : Screen("Admin")
     data object Home : Screen("Home")
-    data object Edit: Screen("EditUser")
+    data object Edit: Screen("EditUser/{userId}")
+    {
+        fun createRoute(userId: String) = "EditUser/$userId"
+    }
     data object AddUser: Screen("AddUser")
 
 }
@@ -42,9 +47,13 @@ fun NavManager()
             val checkSessionViewModel: CheckSessionViewModel = hiltViewModel()
             CheckSessionView(navController, checkSessionViewModel)
         }
-        composable(Screen.Edit.route){
+        composable(route = Screen.Edit.route,
+            arguments = listOf(navArgument("userId") { type = NavType.StringType})
+        ){ backStackEntry ->
+            val userID = backStackEntry.arguments?.getString("userId")
             val adminViewModel: AdminViewModel = hiltViewModel()
-           // EditUserView(navController, adminViewModel)
+           EditUserView(userID!!,navController, adminViewModel)
+
         }
         composable(Screen.Home.route) {
             HomeView(navController)

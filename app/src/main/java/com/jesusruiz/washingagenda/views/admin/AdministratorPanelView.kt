@@ -1,14 +1,18 @@
 package com.jesusruiz.washingagenda.views.admin
 
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,6 +28,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.items.UserCard
+import com.jesusruiz.washingagenda.navigation.Screen
 import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,34 +37,51 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
     LaunchedEffect(Unit) {
         adminViewModel.getUsers()
     }
+    val state = adminViewModel.adminState
+
     Scaffold(topBar = {TopAppBar(title = {Text(text = "Admin Panel")},
         navigationIcon ={
             IconButton(onClick = {
                 adminViewModel.logOut()
                 navController.navigate("Login")
             }) {
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                Icon(imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                     contentDescription = "Go back")
             }
         })}
     ){ paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues), horizontalAlignment = Alignment.CenterHorizontally) {
-            val users = adminViewModel.adminState.users
-           LazyColumn() {
-               items(users){
-                   user ->
-                   UserCard(name = user.name, department = user.departmentN, building = user.building, hours = user.hours)
-                   {
-                       navController.navigate("EditUser/${user.userID}")
-                   } }
-           }
-            Button(onClick = {
-                navController.navigate("AddUser") },
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green)))
+            if (state.isLoading)
             {
-                Text(text = "Agregar usuario")
+                Box(
+                    Modifier.fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
-        }
+            else{
+                Column(modifier = Modifier.padding(paddingValues), horizontalAlignment = Alignment.CenterHorizontally) {
+                    val users = adminViewModel.adminState.users
+                    val buildings = adminViewModel.adminState.adminBuildings
+                    LazyColumn() {
+                        items(users){
+                                user ->
+                            UserCard(name = user.name, department = user.departmentN, building = buildings[user.building]!!, hours = user.hours)
+                            {
+                                navController.navigate(Screen.Edit.createRoute(user.userID))
+                            } }
+                    }
+                    Button(onClick = {
+                        navController.navigate("AddUser") },
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green)))
+                    {
+                        Text(text = "Agregar usuario")
+                    }
+                }
+            }
+
 
     }
 }
