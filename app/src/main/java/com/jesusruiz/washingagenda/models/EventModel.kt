@@ -1,11 +1,13 @@
 package com.jesusruiz.washingagenda.models
 
-class EventModel(userID: String = "",
-                 departmentN: String = "",
-                 building: String = "",
-                 startDate: String = "",
-                 endDate: String = "",
-                 status: EventStatus = EventStatus.Pending,
+import kotlinx.datetime.LocalDateTime
+
+data class EventModel(val userID: String = "",
+                 val departmentN: String = "",
+                val building: String = "",
+                var startDate: LocalDateTime,
+               var endDate: LocalDateTime,
+               var status: EventStatus = EventStatus.Pending,
     )
 
 enum class EventStatus {Pending, Active, Completed,Canceled}
