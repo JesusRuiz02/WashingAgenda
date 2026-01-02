@@ -17,43 +17,6 @@ class RegisterViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
-    fun addUser(name: String, email: String, password: String, department: String, building: String, onSuccess: () -> Unit ){
-         viewModelScope.launch {
-             try {
-                 val result = auth.createUserWithEmailAndPassword(email, password).await()
-                 if(result.user != null)
-                 {
-                     saveUser(name, department, building)
-                     onSuccess()
-                     Log.d("Success","The user was added")
-                 }
-             }
-             catch (e: Exception)
-             {
-                 Log.d("Error", "The user could not be added ${e.message}")
-             }
-         }
-    }
-
-    private suspend fun saveUser(name: String, department: String, building: String)
-    {
-        val id = auth.currentUser?.uid ?: return
-        val email = auth.currentUser?.email ?: return
-        val user = UserModel(userID = id.toString(),
-                    email = email,
-                    name = name,
-                    building = building,
-                    departmentN = department,
-                    hours = 10,
-                    role = "host",
-                    adminBuilding = emptyList())
-                    firestore
-                    .collection("Users")
-                    .document(id)
-                    .set(user)
-                    .await()
-                Log.d("Success", "User is saved")
-    }
 
 
 }

@@ -27,7 +27,10 @@ class AdminViewModel @Inject constructor(
         val isLoading : Boolean = false,
         var users: List<UserModel> = emptyList(),
         var editUser: UserModel = UserModel(),
-        var adminBuildings : Map<String, String> = emptyMap()
+        var addUser: UserModel = UserModel(),
+        var adminBuildings : Map<String, String> = emptyMap(),
+        val editUserErrors: Map<String, String> = emptyMap(),
+        val createUserErrors: Map<String, String> = emptyMap()
     )
 
     var adminState by mutableStateOf(AdminUiState())
@@ -39,7 +42,6 @@ class AdminViewModel @Inject constructor(
         data class DepartmentChanged(val value: String) : AdminInputAction()
         data class HoursChanged(val value: Int) : AdminInputAction()
         data class BuildingChanged(val value: String) : AdminInputAction()
-
     }
 
     fun onAction(action: AdminInputAction) {
@@ -70,6 +72,86 @@ class AdminViewModel @Inject constructor(
 
         }
     }
+
+    fun saveEditUser(onSuccess: () -> Unit){
+       viewModelScope.launch {
+           try {
+               val user = hashMapOf(
+                   "building" to adminState.editUser.building,
+                   "departmentN" to adminState.editUser.departmentN,
+                   "hours" to adminState.editUser.hours,
+                   "name" to adminState.editUser.name,
+                )
+               firestore.collection("Users").document(adminState.editUser.userID)
+                   .update(user as Map<String, Any>).await()
+                onSuccess()
+           }
+           catch (e: Exception)
+           {
+                Log.d("Error", e.toString())
+           }
+       }
+    }
+
+    fun validateEditUser(): Boolean{
+        val newErrors = mutableMapOf<String,String>()
+        val user = adminState.editUser
+        if(user.name.isBlank()) newErrors["name"] = "El nombre no puede estar vacío"
+        if (user.building.isEmpty()) newErrors["building"] = "Selecciona un edificio"
+        if(user.departmentN.isEmpty()){
+             newErrors["departmentN"] = "Selecciona el número del departamento"
+        }
+        adminState = adminState.copy(editUserErrors = newErrors)
+        return newErrors.isEmpty()
+    }
+
+    fun validateCreateUser(): Boolean{
+        val errors = mutableMapOf<String, String>()
+        val user = adminState.editUser
+        if(user.name.isBlank()) errors["name"] = "El nombre no puede estar vacío"
+        if(!user.email.contains("@")) errors["email"] = "Correo invalido"
+        if (user.building.isEmpty()) errors["building"] = "Selecciona un edificio"
+        adminState = adminState.copy(editUserErrors = errors)
+        return errors.isEmpty()
+    }
+    fun addUser(name: String, email: String, password: String, department: String, building: String, onSuccess: () -> Unit ){
+        viewModelScope.launch {
+            try {
+                val result = auth.createUserWithEmailAndPassword(email, password).await()
+                if(result.user != null)
+                {
+                    saveUser(name, department, building)
+                    onSuccess()
+                    Log.d("Success","The user was added")
+                }
+            }
+            catch (e: Exception)
+            {
+                Log.d("Error", "The user could not be added ${e.message}")
+            }
+        }
+    }
+
+    private suspend fun saveUser(name: String, department: String, building: String)
+    {
+        val id = auth.currentUser?.uid ?: return
+        val email = auth.currentUser?.email ?: return
+        val user = UserModel(userID = id.toString(),
+            email = email,
+            name = name,
+            building = building,
+            departmentN = department,
+            hours = 10,
+            role = "host",
+            adminBuilding = emptyList())
+        firestore
+            .collection("Users")
+            .document(id)
+            .set(user)
+            .await()
+        Log.d("Success", "User is saved")
+    }
+
 
 
     fun getUserById(idUser: String){

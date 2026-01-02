@@ -63,8 +63,12 @@ fun NavManager()
                 AdminPanelView(navController, adminViewModel)
             }
             composable(Screen.AddUser.route) {
-                val registerViewModel: RegisterViewModel = hiltViewModel()
-                AddUserView(navController, registerViewModel)
+                backStackEntry ->
+                val parentEntry = remember(backStackEntry){
+                    navController.getBackStackEntry("admin_graph")
+                }
+                val adminViewModel: AdminViewModel = hiltViewModel(parentEntry)
+                AddUserView(navController, adminViewModel)
             }
             composable(route = Screen.Edit.route,
                 arguments = listOf(navArgument("userId") { type = NavType.StringType})

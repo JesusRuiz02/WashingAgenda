@@ -1,6 +1,8 @@
 package com.jesusruiz.washingagenda.views.admin
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -67,6 +69,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                     value = state.editUser.name,
                     label = { Text("Nombre") },
+                    supportingText = {
+                        state.editUserErrors["name"]?.let {
+                            Text(text = it, color = MaterialTheme.colorScheme.error)
+                        }
+                    },
                     onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.NameChanged(it)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -103,6 +110,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                         value = state.adminBuildings[state.editUser.building].orEmpty(),
                         onValueChange = { },
                         readOnly = true,
+                        supportingText = {
+                            state.editUserErrors["building"]?.let {
+                                Text(text = it, color = MaterialTheme.colorScheme.error)
+                            }
+                        },
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
@@ -130,6 +142,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     label = { Text("Número de departamento") },
                     modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                     value = state.editUser.departmentN,
+                    supportingText = {
+                        state.editUserErrors["departmentN"]?.let {
+                            Text(text = it, color = MaterialTheme.colorScheme.error)
+                        }
+                    },
                     onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.DepartmentChanged(it)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -145,7 +162,15 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green))) {
                     Text(text = "Reiniciar contraseña", color = Color.White)
                 }
-                Button(onClick = { /*TODO*/ },
+                Button(onClick = {
+                    if (adminViewModel.validateEditUser())
+                    {
+                        adminViewModel.saveEditUser(){
+                            navController.popBackStack()
+                        }
+                        Log.d("probando", "probando")
+                    }
+                },
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp).fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green)))
