@@ -1,46 +1,65 @@
-package com.jesusruiz.washingagenda.items
+package com.jesusruiz.washingagenda.items.schedule
 
-import androidx.compose.foundation.horizontalScroll
+
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.ParentDataModifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jesusruiz.washingagenda.models.EventModel
-import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
 
 
+
 @Composable
-fun Schedule(
+fun BasicSchedule(
     events: List<EventModel>,
     modifier: Modifier = Modifier,
-    eventContent: @Composable (EventModel) -> Unit = { BasicEvent(event = it)},
+    eventContent: @Composable (EventModel) -> Unit = { BasicEvent(event = it) },
     minDate: LocalDate = events.minByOrNull (EventModel::startDate)!!.startDate.toLocalDate(),
     maxDate: LocalDate = events.maxByOrNull(EventModel::endDate)!!.endDate.toLocalDate(),
-
-
+    dayWidth: Dp,
+    hourHeight: Dp
 ) {
-    val dayWidth = 256.dp
     val numDays = ChronoUnit.DAYS.between(minDate, maxDate).toInt() + 1
-    val hourHeight = 64.dp
+    val divideColor = if(!isSystemInDarkTheme()) Color.LightGray else Color.DarkGray
     Layout(content = {
         events.sortedBy(EventModel::startDate).forEach { event ->
             Box(modifier = Modifier.eventData(event)) {
                 eventContent(event)
             }
         }
-    }, modifier = Modifier
-        .verticalScroll(rememberScrollState())
-        .horizontalScroll(rememberScrollState())
+    }, modifier = modifier
+        .drawBehind
+        {
+            repeat(23){
+                drawLine(
+                    divideColor,
+                    start = Offset(0f,(it +1) * hourHeight.toPx()),
+                    end = Offset(size.width, (it+1) * hourHeight.toPx()),
+                    strokeWidth = 1.dp.toPx()
+                )
+            }
+            repeat(numDays - 1){
+                drawLine(
+                    divideColor,
+                    start = Offset((it + 1) * dayWidth.toPx(), 0f),
+                    end = Offset((it + 1) * dayWidth.toPx(), size.height),
+                    strokeWidth = 1.dp.toPx()
+                )
+            }
+        }
     )
     { measurables, constraints ->
         val width = dayWidth.roundToPx() * numDays
@@ -72,10 +91,3 @@ private fun Modifier.eventData(event: EventModel) = this.then(EventDataModifier(
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun SchedulePreview() {
-    WashingAgendaTheme() {
-        Schedule(sampleEvents)
-    }
-}

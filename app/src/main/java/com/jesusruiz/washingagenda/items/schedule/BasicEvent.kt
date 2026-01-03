@@ -1,4 +1,4 @@
-package com.jesusruiz.washingagenda.items
+package com.jesusruiz.washingagenda.items.schedule
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
