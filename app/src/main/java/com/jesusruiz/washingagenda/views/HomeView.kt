@@ -1,38 +1,37 @@
 package com.jesusruiz.washingagenda.views
 
 
-import kotlin.time.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.himanshoe.kalendar.Kalendar
-import com.himanshoe.kalendar.KalendarEvents
-import com.himanshoe.kalendar.KalendarType
-import com.himanshoe.kalendar.foundation.action.OnDaySelectionAction
-import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.todayIn
+import com.jesusruiz.washingagenda.models.EventModel
+import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+
 
 @Composable
 fun HomeView(navController: NavController)
 {
-    /**Column (modifier = Modifier.wrapContentSize().background(Color.LightGray)) {
-        Kalendar(
-            currentDay = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-            modifier = Modifier.fillMaxWidth(),
-            events = KalendarEvents(),
-            showLabel = true,
-            kalendarType = KalendarType.Oceanic,
-            onDayClick = { date , events ->
-                println("Day selected: $date")
 
-            },
-        )
-    }**/
+
+
 }
+
