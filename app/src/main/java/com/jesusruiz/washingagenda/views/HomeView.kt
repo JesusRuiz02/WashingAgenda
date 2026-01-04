@@ -26,9 +26,6 @@ import java.time.LocalDateTime
 @Composable
 fun HomeView(navController: NavController, )
 {
-    val verticalScrollState = rememberScrollState()
-    val horizontalScrollState = rememberScrollState()
-    Text(text = "prueba")
     val events = listOf(
         EventModel(
             id = "1",
@@ -43,8 +40,8 @@ fun HomeView(navController: NavController, )
             id = "2",
             userID = "u2",
             building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 3, 14, 0),
-            endDate = LocalDateTime.of(2026, 1, 3, 15, 30),
+            startDate = LocalDateTime.of(2026, 1, 2, 13, 0),
+            endDate = LocalDateTime.of(2026, 1, 2, 14, 0),
             departmentN = "8",
             color = Color(0xFFAFBBF2),
         )
@@ -66,8 +63,6 @@ fun HomeView(navController: NavController, )
                 events = events,
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(verticalScrollState)
-                    .horizontalScroll(horizontalScrollState)
             )
         }
     }

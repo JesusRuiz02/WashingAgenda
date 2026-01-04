@@ -1,6 +1,7 @@
 package com.jesusruiz.washingagenda.schedule
 
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -66,16 +67,19 @@ fun BasicSchedule(
         val placeablesWithEvents = measurables.map { measurable ->
             val event = measurable.parentData as EventModel
             val eventDurationMinutes = ChronoUnit.MINUTES.between(event.startDate, event.endDate)
-            val eventHeight = ((eventDurationMinutes / 60f) + hourHeight.toPx()).roundToInt()
+            val eventHeight = ((eventDurationMinutes / 60f) * hourHeight.toPx()).roundToInt()
             val placeable = measurable.measure(constraints.copy(minWidth = dayWidth.roundToPx(), maxWidth = dayWidth.roundToPx(),minHeight = eventHeight,maxHeight = eventHeight))
             Pair(placeable, event)
         }
         layout(width , height) {
             placeablesWithEvents.forEach { (placeable, event) ->
                 val eventOffsetMinutes = ChronoUnit.MINUTES.between(LocalTime.MIN, event.startDate.toLocalTime())
+                Log.d("hora", (eventOffsetMinutes / 60f).toString())
                 val eventY = ((eventOffsetMinutes / 60f) * hourHeight.toPx()).roundToInt()
+                Log.d("hora", eventY.toString())
                 val eventOffsetDays = ChronoUnit.DAYS.between(minDate, event.startDate.toLocalDate()).toInt()
                 val eventX = eventOffsetDays * dayWidth.roundToPx()
+                Log.d("OFFSET", "Evento X: $eventX, Event Y: $eventY")
                 placeable.place(eventX,eventY)
 
             }

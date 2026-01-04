@@ -1,9 +1,12 @@
+import android.util.Log
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +26,7 @@ import com.jesusruiz.washingagenda.schedule.sampleEvents
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun Schedule(
@@ -39,18 +43,22 @@ fun Schedule(
     val horizontalScrollState = rememberScrollState()
     var sidebarWidth by remember { mutableStateOf(0) }
     Column(modifier = modifier) {
+        val numDays = ChronoUnit.DAYS.between(minDate,maxDate).toInt() + 1
+        val totalWidth = dayWidth * numDays * 50
         ScheduleHeader(minDate = minDate,
             maxDate = maxDate,
             dayWidth = dayWidth,
             dayHeader = dayHeader,
             modifier = Modifier
                 .padding(start = with(LocalDensity.current) { sidebarWidth.toDp()})
-                .horizontalScroll(horizontalScrollState))
+                .horizontalScroll(horizontalScrollState)
+                .width(totalWidth))
 
         Row(modifier = Modifier.weight(1f)){
             ScheduleSideBar(
                 hourHeight = hourHeight,
                 modifier = Modifier
+                    .width(56.dp)
                     .verticalScroll(verticalScrollState)
                     .onGloballyPositioned { sidebarWidth = it.size.width}
             )
@@ -65,6 +73,7 @@ fun Schedule(
                     .weight(1f) // Fill remaining space in the column
                     .verticalScroll(verticalScrollState)
                     .horizontalScroll(horizontalScrollState)
+                    .width(totalWidth)
             )
         }
 
