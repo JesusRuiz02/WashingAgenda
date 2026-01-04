@@ -1,9 +1,8 @@
-package com.jesusruiz.washingagenda.items.schedule
+package com.jesusruiz.washingagenda.schedule
 
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -26,7 +25,7 @@ import kotlin.math.roundToInt
 fun BasicSchedule(
     events: List<EventModel>,
     modifier: Modifier = Modifier,
-    eventContent: @Composable (EventModel) -> Unit = { BasicEvent(event = it) },
+    eventContent: @Composable (EventModel) -> Unit = { BasicEvent(event =  it) },
     minDate: LocalDate = events.minByOrNull (EventModel::startDate)!!.startDate.toLocalDate(),
     maxDate: LocalDate = events.maxByOrNull(EventModel::endDate)!!.endDate.toLocalDate(),
     dayWidth: Dp,

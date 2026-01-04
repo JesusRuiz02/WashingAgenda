@@ -1,5 +1,6 @@
 package com.jesusruiz.washingagenda.login
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -65,8 +66,10 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White))
         Button(onClick = { loginVM.login(email, password,
-            { navController.navigate("Admin")},
-            {navController.navigate("Home")})
+            { Log.d("home", "admin")
+                navController.navigate("Admin")},
+            { Log.d("home", "home")
+                navController.navigate("Home")})
             }, modifier = Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp).fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(id = R.color.dark_green)
