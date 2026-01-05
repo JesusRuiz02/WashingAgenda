@@ -40,8 +40,8 @@ fun HomeView(navController: NavController, )
             id = "2",
             userID = "u2",
             building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 2, 13, 0),
-            endDate = LocalDateTime.of(2026, 1, 2, 14, 0),
+            startDate = LocalDateTime.of(2026, 1, 3, 13, 0),
+            endDate = LocalDateTime.of(2026, 1, 3, 14, 0),
             departmentN = "8",
             color = Color(0xFFAFBBF2),
         )

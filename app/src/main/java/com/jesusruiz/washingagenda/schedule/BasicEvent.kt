@@ -30,7 +30,7 @@ fun BasicEvent(event: EventModel, modifier: Modifier = Modifier){
             .fillMaxSize()
             .padding(end = 2.dp, bottom = 2.dp)
             .background(event.color, shape = RoundedCornerShape(4.dp))
-            .padding(4.dp)
+            .padding(10.dp)
     ) {
         Text(
             text = "${event.startDate.format(EventTimeFormatter)} - ${
