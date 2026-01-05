@@ -29,7 +29,7 @@ fun BasicEvent(event: EventModel, modifier: Modifier = Modifier){
         modifier = modifier
             .fillMaxSize()
             .padding(end = 2.dp, bottom = 2.dp)
-            .background(event.color, shape = RoundedCornerShape(4.dp))
+            .background(event.color, shape = RoundedCornerShape(12.dp))
             .padding(10.dp)
     ) {
         Text(
@@ -38,10 +38,10 @@ fun BasicEvent(event: EventModel, modifier: Modifier = Modifier){
                     EventTimeFormatter
                 )
             }",
-            style = MaterialTheme.typography.labelSmall
+            style = MaterialTheme.typography.labelMedium
         )
         Text(
-            text = event.departmentN,
+            text = "Departamento: " + event.departmentN,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold
         )

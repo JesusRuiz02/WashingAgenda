@@ -19,6 +19,7 @@ class CheckSessionViewModel @Inject constructor(
     fun checkSession(isAdmin:() -> Unit, isUser: () -> Unit, notSessionInit: () -> Unit){
         if(auth.currentUser?.email.isNullOrEmpty())
         {
+            Log.d("probando", "no hay sesion")
             notSessionInit()
             return
         }
@@ -31,6 +32,8 @@ class CheckSessionViewModel @Inject constructor(
                     .get()
                     .await()
                 val user = doc.toObject(UserModel::class.java) ?: return@launch
+                Log.d("probando", user.email)
+                Log.d("probando", user.role)
                 when (user.role) {
                     "admin" -> isAdmin()
                     "user"  -> isUser()
