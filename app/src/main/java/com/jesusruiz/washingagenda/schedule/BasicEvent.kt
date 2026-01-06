@@ -28,7 +28,7 @@ fun BasicEvent(event: EventModel, modifier: Modifier = Modifier){
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(end = 2.dp, bottom = 2.dp)
+            .padding(end = 10.dp, bottom = 2.dp)
             .background(event.color, shape = RoundedCornerShape(12.dp))
             .padding(10.dp)
     ) {
