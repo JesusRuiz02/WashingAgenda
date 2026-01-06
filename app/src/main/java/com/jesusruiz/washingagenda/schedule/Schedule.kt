@@ -47,13 +47,14 @@ fun Schedule(
     events: List<EventModel>,
     modifier: Modifier = Modifier,
     eventContent: @Composable (event: EventModel) -> Unit = { BasicEvent(event = it) },
-    minDate: LocalDate = events.minByOrNull(EventModel::startDate)!!.startDate.toLocalDate(),
-    maxDate: LocalDate = events.maxByOrNull(EventModel::endDate)!!.endDate.toLocalDate(),
     dayHeader: @Composable (day: LocalDate) -> Unit = { BasicDayHeader(day = it) },
     dayWidth: Dp = 256.dp,
     hourHeight: Dp = 64.dp
 ) {
-    val numDays = ChronoUnit.DAYS.between(minDate,maxDate).toInt() + 1
+    val today = LocalDate.now()
+    val minDateCalendar = today.minusDays(4)
+    val maxDateCalendar = today.plusDays(6)
+    val numDays = ChronoUnit.DAYS.between(minDateCalendar, maxDateCalendar).toInt() + 1
     val verticalScrollState = rememberScrollState()
     val horizontalScrollState = rememberScrollState()
     val dividerColor = if(androidx.compose.foundation.isSystemInDarkTheme()) Color.DarkGray else Color.LightGray
@@ -61,8 +62,8 @@ fun Schedule(
     Layout(
         content = {
             ScheduleHeader(
-                minDate = minDate,
-                maxDate = maxDate,
+                minDate = minDateCalendar,
+                maxDate = maxDateCalendar,
                 dayWidth = dayWidth,
                 dayHeader = dayHeader,
                 modifier = Modifier.scheduleHeader()
@@ -139,7 +140,7 @@ fun Schedule(
 
             eventPlaceables.forEach { (placeable, event, _)->
                 val offsetMinutes = ChronoUnit.MINUTES.between(LocalTime.MIN, event.startDate.toLocalTime())
-                val offsetDays = ChronoUnit.DAYS.between(minDate, event.startDate.toLocalDate()).toInt()
+                val offsetDays = ChronoUnit.DAYS.between(minDateCalendar, event.startDate.toLocalDate()).toInt()
                 val eventY = ((offsetMinutes / 60f) * hourHeightPx).roundToInt()
                 val eventX = offsetDays * dayWithPx
 
