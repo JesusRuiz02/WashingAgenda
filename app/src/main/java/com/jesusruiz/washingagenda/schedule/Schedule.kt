@@ -49,6 +49,7 @@ fun Schedule(
     dayWidth: Dp = 256.dp,
     hourHeight: Dp = 64.dp,
     pastDaysPreview: Long = 4,
+    enableOverlapCalculations: Boolean = true,
     postDaysPreview: Long = 6
 ) {
     val today = LocalDate.now()
@@ -81,7 +82,8 @@ fun Schedule(
                 dayWidth = dayWidth,
                 hourHeight = hourHeight,
                 pastDaysPreview = pastDaysPreview,
-                postDaysPreview = postDaysPreview
+                postDaysPreview = postDaysPreview,
+                enableOverlapCalculations = enableOverlapCalculations
             )
         }
     }
