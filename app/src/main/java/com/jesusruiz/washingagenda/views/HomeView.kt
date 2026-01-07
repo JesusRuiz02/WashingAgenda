@@ -82,7 +82,8 @@ fun HomeView(navController: NavController, )
             Schedule(
                 events = events,
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxSize(),
+                pastDaysPreview = 6
             )
             IconButton(
                 modifier = Modifier.align(Alignment.BottomEnd)
