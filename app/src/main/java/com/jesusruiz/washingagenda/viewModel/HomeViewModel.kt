@@ -27,7 +27,7 @@ class HomeViewModel @Inject constructor(
     fun onAction(action: HomeInputAction) {
         when(action){
             is HomeInputAction.IsAddingEventChange ->{
-                homeState.copy( isAddingEvent = action.value)
+               homeState = homeState.copy( isAddingEvent = action.value)
             }
         }
     }

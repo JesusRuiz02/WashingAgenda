@@ -8,18 +8,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,13 +26,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.toColor
 import androidx.navigation.NavController
+import com.jesusruiz.washingagenda.Events.AddEventsView
 import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
-import com.jesusruiz.washingagenda.viewModel.LoginViewModel
 import java.time.LocalDateTime
 
 
@@ -100,8 +98,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                     .padding(end = 20.dp, bottom = 20.dp)
                     .size(75.dp),
                 onClick = {
-                    Log.d("prueba", state.isAddingEvent.toString())
-                    state.isAddingEvent = !state.isAddingEvent
+                    homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
                 }
             ) {
                 Icon(
@@ -112,15 +109,21 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                 )
             }
             AnimatedVisibility(visible = state.isAddingEvent,
-                modifier = Modifier.align(Alignment.Center),
-                enter = expandIn(tween(300)),
+                modifier = Modifier.align(Alignment.BottomCenter),
+                enter = slideInVertically(
+                    tween(300),
+                    initialOffsetY = {fullHeight -> fullHeight}
+                ),
                 exit = shrinkOut(tween(300))) {
-                Box(modifier = Modifier
-                    .size(200.dp)
-                    .background(Color.Green)
+                /*Box(modifier = Modifier
+                    .height(1000.dp)
+                    .width(400.dp)
+                    .padding(bottom = 20.dp)
+                    .background(colorResource(R.color.dark_green))
 
                 ) {
-                }
+                }*/
+                AddEventsView(navController = navController)
             }
         }
     }
