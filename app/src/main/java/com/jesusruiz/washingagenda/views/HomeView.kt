@@ -30,13 +30,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.models.EventModel
+import com.jesusruiz.washingagenda.viewModel.HomeViewModel
+import com.jesusruiz.washingagenda.viewModel.LoginViewModel
 import java.time.LocalDateTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeView(navController: NavController, )
+fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
 {
+    val state = homeViewModel.homeState
     val events = listOf(
         EventModel(
             id = "1",
@@ -89,7 +92,9 @@ fun HomeView(navController: NavController, )
                 modifier = Modifier.align(Alignment.BottomEnd)
                     .padding(end = 20.dp, bottom = 20.dp)
                     .size(75.dp),
-                onClick = { }
+                onClick = {
+                    state.isAddingEvent = !state.isAddingEvent
+                }
             ) {
                 Icon(
                     modifier = Modifier.size(75.dp),
