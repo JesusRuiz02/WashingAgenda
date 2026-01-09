@@ -4,6 +4,11 @@ package com.jesusruiz.washingagenda.views
 
 import Schedule
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.shrinkOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,6 +84,8 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
         }
     ) {
         paddingValues ->
+
+
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ){
@@ -93,6 +100,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                     .padding(end = 20.dp, bottom = 20.dp)
                     .size(75.dp),
                 onClick = {
+                    Log.d("prueba", state.isAddingEvent.toString())
                     state.isAddingEvent = !state.isAddingEvent
                 }
             ) {
@@ -102,6 +110,17 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                     contentDescription = "Add event",
 
                 )
+            }
+            AnimatedVisibility(visible = state.isAddingEvent,
+                modifier = Modifier.align(Alignment.Center),
+                enter = expandIn(tween(300)),
+                exit = shrinkOut(tween(300))) {
+                Box(modifier = Modifier
+                    .size(200.dp)
+                    .background(Color.Green)
+
+                ) {
+                }
             }
         }
     }

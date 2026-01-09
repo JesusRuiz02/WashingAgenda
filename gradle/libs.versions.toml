@@ -23,6 +23,7 @@ firebaseBomV = "34.7.0"
 
 
 [libraries]
+androidx-compose-animation = { module = "androidx.compose.animation:animation" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

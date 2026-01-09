@@ -20,6 +20,7 @@ import com.jesusruiz.washingagenda.views.HomeView
 import com.jesusruiz.washingagenda.login.LoginView
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.viewModel.CheckSessionViewModel
+import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 import com.jesusruiz.washingagenda.views.admin.AddUserView
 import com.jesusruiz.washingagenda.views.admin.AdminPanelView
 import com.jesusruiz.washingagenda.views.admin.EditUserView
@@ -55,7 +56,8 @@ fun NavManager()
             CheckSessionView(navController, checkSessionViewModel)
         }
         composable(Screen.Home.route) {
-            HomeView(navController)
+            val homeViewModel : HomeViewModel = hiltViewModel()
+            HomeView(navController, homeViewModel)
         }
 
         navigation(route = "admin_graph", startDestination = Screen.Admin.route)
