@@ -3,19 +3,15 @@ package com.jesusruiz.washingagenda.views
 
 
 import Schedule
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,9 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColor
 import androidx.navigation.NavController
-import com.jesusruiz.washingagenda.Events.AddEventsView
+import com.jesusruiz.washingagenda.events.AddEventsView
 import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
@@ -83,7 +78,6 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
     ) {
         paddingValues ->
 
-
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ){
@@ -102,7 +96,8 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                 }
             ) {
                 Icon(
-                    modifier = Modifier.size(75.dp),
+                    modifier = Modifier
+                        .size(75.dp),
                     painter = painterResource(R.drawable.ic_add_fillded),
                     contentDescription = "Add event",
 
@@ -114,7 +109,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                     tween(300),
                     initialOffsetY = {fullHeight -> fullHeight}
                 ),
-                exit = shrinkOut(tween(300))) {
+                exit = shrinkOut(tween(500))) {
                 /*Box(modifier = Modifier
                     .height(1000.dp)
                     .width(400.dp)
@@ -123,7 +118,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
 
                 ) {
                 }*/
-                AddEventsView(navController = navController)
+                AddEventsView(navController,homeViewModel)
             }
         }
     }
