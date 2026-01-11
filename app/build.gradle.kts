@@ -72,6 +72,7 @@ dependencies {
     implementation("androidx.compose.animation:animation")
     implementation(libs.firebaseFirestore)
     testImplementation(libs.junit)
+    implementation(libs.wheelPicker)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
