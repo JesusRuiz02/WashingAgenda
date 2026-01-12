@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -72,7 +74,13 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Agenda")}
+                title = { Text("Agenda")},
+                navigationIcon = {
+                    IconButton(onClick = { homeViewModel.signOut()
+                        navController.popBackStack()}){
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
             )
         }
     ) {

@@ -5,13 +5,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-
+    private val auth: FirebaseAuth,
+    private val firestore: FirebaseFirestore
 ): ViewModel() {
 
     data class HomeUIState(
@@ -29,6 +32,10 @@ class HomeViewModel @Inject constructor(
 
     var homeState by mutableStateOf(HomeUIState())
             private set
+
+    fun signOut(){
+        auth.signOut()
+    }
 
     fun onAction(action: HomeInputAction) {
         when(action){
