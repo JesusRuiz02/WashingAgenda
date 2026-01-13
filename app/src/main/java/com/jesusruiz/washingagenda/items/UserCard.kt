@@ -25,7 +25,7 @@ fun UserCard(name: String, department: String, building: String, hours: Int, onC
 {
     Card(modifier = Modifier.padding(10.dp),
         shape = RoundedCornerShape(topEnd = 10.dp, topStart = 10.dp,bottomEnd = 10.dp, bottomStart = 10.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.dark_green))
+        colors = CardDefaults.cardColors(containerColor = Color.DarkGray)
     ) {
         Row(modifier = Modifier.padding(10.dp)) {
             Text(text = name, color = White, fontSize = 20.sp)

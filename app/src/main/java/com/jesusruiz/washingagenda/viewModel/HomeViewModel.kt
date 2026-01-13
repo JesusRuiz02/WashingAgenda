@@ -1,6 +1,5 @@
 package com.jesusruiz.washingagenda.viewModel
 
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,11 +21,14 @@ class HomeViewModel @Inject constructor(
         var currentTime: LocalDateTime = LocalDateTime.now(),
         val startDateTime: LocalDateTime = LocalDateTime.now(),
         val endDateTime: LocalDateTime = currentTime.plusDays(6),
-
+        val eventStart: LocalDateTime = LocalDateTime.now(),
+        val eventEnd: LocalDateTime = LocalDateTime.now()
         )
 
     sealed class HomeInputAction{
         data class IsAddingEventChange(val value: Boolean): HomeInputAction()
+        data class IsStartDateEventChanged(val value: LocalDateTime): HomeInputAction()
+        data class IsEndDateEventChanged(val value: LocalDateTime): HomeInputAction()
     }
 
 
@@ -41,6 +43,14 @@ class HomeViewModel @Inject constructor(
         when(action){
             is HomeInputAction.IsAddingEventChange ->{
                homeState = homeState.copy( isAddingEvent = action.value)
+            }
+            is HomeInputAction.IsStartDateEventChanged ->
+            {
+                homeState = homeState.copy(eventStart = action.value)
+            }
+            is HomeInputAction.IsEndDateEventChanged ->{
+                homeState = homeState.copy(eventEnd = action.value)
+
             }
 
         }

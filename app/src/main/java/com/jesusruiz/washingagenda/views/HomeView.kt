@@ -7,7 +7,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -118,14 +116,6 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                     initialOffsetY = {fullHeight -> fullHeight}
                 ),
                 exit = shrinkOut(tween(500))) {
-                /*Box(modifier = Modifier
-                    .height(1000.dp)
-                    .width(400.dp)
-                    .padding(bottom = 20.dp)
-                    .background(colorResource(R.color.dark_green))
-
-                ) {
-                }*/
                 AddEventsView(navController,homeViewModel)
             }
         }

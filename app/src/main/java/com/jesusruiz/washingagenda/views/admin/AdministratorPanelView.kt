@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.R
@@ -81,9 +82,9 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
                     }
                     Button(onClick = {
                         navController.navigate("AddUser") },
-                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green)))
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray))
                     {
-                        Text(text = "Agregar usuario")
+                        Text(text = "Agregar usuario",color = Color.White)
                     }
                 }
             }

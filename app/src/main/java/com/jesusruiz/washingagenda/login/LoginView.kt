@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -38,31 +39,34 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
     val state = loginVM.uiState
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(100.dp))
-        Image(modifier = Modifier.height(200.dp).width(200.dp).padding(20.dp),
+        Image(modifier = Modifier.height(110.dp).width(110.dp).padding(20.dp),
             painter = painterResource(id = R.drawable.washing_machine), contentDescription = "Login Icon"
         )
         OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp).fillMaxWidth(),
             value = email,
+            shape = MaterialTheme.shapes.medium,
             onValueChange = {email = it},
             label = { Text(text = "Email",
                 style = LocalTextStyle.current.copy(color = Color.White)
             )},
+
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = colorResource(id = R.color.dark_green),
-                unfocusedContainerColor = colorResource(id = R.color.dark_green),
+                focusedContainerColor = MaterialTheme.colorScheme.primary,
+                unfocusedContainerColor = MaterialTheme.colorScheme.primary,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White)
         )
         OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp).fillMaxWidth(),
             value = password,
+            shape = MaterialTheme.shapes.medium,
             onValueChange = {password = it},
             label = { Text(text = "Password"
             )},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = colorResource(id = R.color.dark_green),
-                unfocusedContainerColor = colorResource(id = R.color.dark_green),
+                focusedContainerColor = MaterialTheme.colorScheme.primary,
+                 unfocusedContainerColor = MaterialTheme.colorScheme.primary,
                 focusedTextColor = Color.White,
                 unfocusedTextColor = Color.White))
         Button(onClick = { loginVM.login(email, password,
@@ -72,7 +76,7 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
                 navController.navigate("Home")})
             }, modifier = Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp).fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(id = R.color.dark_green)
+                containerColor = MaterialTheme.colorScheme.secondary
             )) {
             Text(text = "Login",
                 style = LocalTextStyle.current.copy(color = Color.White)

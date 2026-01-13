@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -60,7 +61,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                 .align(alignment = Alignment.CenterHorizontally)
                 .background(color = colorResource(R.color.dark_green))
                 .fillMaxWidth()
-                .height(200.dp)
+                .height(300.dp)
 
             ){
                 Column {
@@ -78,12 +79,15 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                             timeFormat = TimeFormat.HOUR_24,
                             textColor = Color.DarkGray,
                             rowCount = 5,
-                            size = DpSize(200.dp, 100.dp),
+                            size = DpSize(200.dp, 200.dp),
                             selectorProperties = WheelPickerDefaults.selectorProperties(
                                 enabled = true,
                                 shape = RoundedCornerShape(6.dp),
                                 color = Color.White,
-                            ),)
+                            ),){
+                                snappedDateTime -> homeViewModel.onAction(HomeViewModel.HomeInputAction.IsStartDateEventChanged(snappedDateTime))
+
+                        }
                     }
                     Row(modifier = Modifier
                         .fillMaxWidth(),
@@ -99,13 +103,17 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                             timeFormat = TimeFormat.HOUR_24,
                             textColor = Color.DarkGray,
                             rowCount = 5,
-                            size = DpSize(200.dp, 100.dp),
+                            size = DpSize(200.dp, 200.dp),
                             selectorProperties = WheelPickerDefaults.selectorProperties(
                                 enabled = true,
                                 shape = RoundedCornerShape(6.dp),
                                 color = Color.White,
                             ),)
+                        {
+                            snappedDateTime -> homeViewModel.onAction(HomeViewModel.HomeInputAction.IsEndDateEventChanged(snappedDateTime))
+                        }
                     }
+                    Text(text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = Color.White)
 
 
 
