@@ -1,8 +1,10 @@
 package com.jesusruiz.washingagenda.schedule
 
+import android.R
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,6 +22,7 @@ fun BasicSliderLabel(
 ){
     Text(
         text =  time.format(HourFormatter),
+        color = MaterialTheme.colorScheme.secondary,
         modifier = modifier
             .fillMaxWidth()
             .padding(4.dp)

@@ -9,6 +9,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -46,11 +48,13 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
     val state = adminViewModel.adminState
     Scaffold(topBar = {
         TopAppBar(title = {
-            Text(text ="Agregar Inquilino" )},
+            Text(text ="Agregar Inquilino", color = MaterialTheme.colorScheme.secondary)},
         navigationIcon = {
             IconButton(onClick = {
                 navController.popBackStack()}){
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.secondary)
             }
         })
     })
@@ -62,36 +66,40 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
             var departmentN by remember { mutableStateOf("") }
             var building by remember { mutableStateOf("") }
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
                 value = name,
+                label = { Text(text = "Nombre")},
                 onValueChange = {name = it},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White,
-                    focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green))
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
+                    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary)
             )
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth(),
+                shape = MaterialTheme.shapes.medium,
                 value = email,
                 onValueChange = {email = it},
                 label = { Text(text = "Email")},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White)
+                    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,)
                 )
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth(),
                 value = password,
+                shape = MaterialTheme.shapes.medium,
                 onValueChange = {password = it},
                 label = { Text(text = "Contraseña")},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White)
+                    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,)
             )
             //Boton dropdown menu
             var expanded by remember { mutableStateOf(false) }
@@ -101,7 +109,8 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
             ) {
                 OutlinedTextField(
                     label = { Text("Edificio") },
-                    modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth().menuAnchor(),
+                    shape = MaterialTheme.shapes.medium,
+                    modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth().menuAnchor(),
                     value = state.adminBuildings[building].orEmpty(),
                     onValueChange = { },
                     readOnly = true,
@@ -109,10 +118,12 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                        focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                        focusedTextColor = MaterialTheme.colorScheme.primary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
                     )
                 )
                 ExposedDropdownMenu(expanded = expanded,
@@ -131,19 +142,23 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
             }
             OutlinedTextField(modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth(),
                 value = departmentN,
+                shape = MaterialTheme.shapes.medium,
                 onValueChange = {departmentN = it},
                 label = { Text(text = "Número de Departamento")},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = colorResource(id = R.color.dark_green),
-                    unfocusedContainerColor = colorResource(id = R.color.dark_green),
-                    focusedTextColor = Color.White,
-                    unfocusedTextColor = Color.White)
+                    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                    focusedTextColor = MaterialTheme.colorScheme.primary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.primary,)
             )
-            Button(onClick = {
-               adminViewModel.addUser(name,email,password,departmentN,building) { navController.popBackStack() }
-            }) {
-                Text(text = "Agregar inquilino")
+            Button(modifier = Modifier.align(Alignment.CenterHorizontally)
+                .padding(horizontal = 30.dp, vertical = 10.dp),
+                onClick = {
+               adminViewModel.addUser(name,email,password,departmentN,building) { navController.popBackStack()}
+            },
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {
+                Text(text = "Agregar inquilino", color = Color.White)
             }
 
 

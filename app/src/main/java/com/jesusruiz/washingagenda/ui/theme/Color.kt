@@ -3,7 +3,8 @@ package com.jesusruiz.washingagenda.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val Purple80 = Color(0xFFD0BCFF)
-val DarkGray = Color(0xFF1C1C1E)
+val LightGray = Color(0xFF2B2D30)
+
 val CleanBackGround = Color(0xFFE7E7E7)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)

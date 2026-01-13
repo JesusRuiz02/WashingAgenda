@@ -46,29 +46,27 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
             value = email,
             shape = MaterialTheme.shapes.medium,
             onValueChange = {email = it},
-            label = { Text(text = "Email",
-                style = LocalTextStyle.current.copy(color = Color.White)
+            label = { Text(text = "Email", color = MaterialTheme.colorScheme.primary
             )},
 
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.primary,
-                unfocusedContainerColor = MaterialTheme.colorScheme.primary,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White)
+                focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                focusedTextColor = MaterialTheme.colorScheme.primary,
+                unfocusedTextColor = MaterialTheme.colorScheme.primary)
         )
         OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp).fillMaxWidth(),
             value = password,
             shape = MaterialTheme.shapes.medium,
             onValueChange = {password = it},
-            label = { Text(text = "Password"
-            )},
+            label = { Text(text = "Password", color = MaterialTheme.colorScheme.primary)},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
             colors = OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.primary,
-                 unfocusedContainerColor = MaterialTheme.colorScheme.primary,
-                focusedTextColor = Color.White,
-                unfocusedTextColor = Color.White))
+                focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                 unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                focusedTextColor = MaterialTheme.colorScheme.primary,
+                unfocusedTextColor = MaterialTheme.colorScheme.primary))
         Button(onClick = { loginVM.login(email, password,
             { Log.d("home", "admin")
                 navController.navigate("Admin")},

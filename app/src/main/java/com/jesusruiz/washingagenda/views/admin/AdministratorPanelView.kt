@@ -18,9 +18,11 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -41,7 +43,9 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
     }
     val state = adminViewModel.adminState
 
-    Scaffold(topBar = {TopAppBar(title = {Text(text = "Admin Panel")},
+    Scaffold(topBar = {TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+        title = {Text(text = "Admin Panel",color = MaterialTheme.colorScheme.secondary)},
         navigationIcon ={
             IconButton(onClick = {
                 adminViewModel.logOut()
@@ -53,7 +57,8 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
                 }
             }) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ExitToApp,
-                    contentDescription = "Go back")
+                    contentDescription = "Go back",
+                    tint = MaterialTheme.colorScheme.secondary)
             }
         })}
     ){ paddingValues ->
@@ -82,7 +87,7 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
                     }
                     Button(onClick = {
                         navController.navigate("AddUser") },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray))
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary))
                     {
                         Text(text = "Agregar usuario",color = Color.White)
                     }

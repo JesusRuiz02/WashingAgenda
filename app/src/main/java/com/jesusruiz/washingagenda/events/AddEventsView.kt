@@ -1,20 +1,23 @@
 package com.jesusruiz.washingagenda.events
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,22 +37,25 @@ import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
     val state = homeViewModel.homeState
     Scaffold(topBar = {
-        TopAppBar(
+        CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
             title = {
-            Text(text ="Nuevo Evento", fontWeight = FontWeight.Bold, color = Color.White )
+            Text(text ="Nuevo Evento", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
                     },
             navigationIcon = {
                 TextButton (onClick = {
                     homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))})
                 {
-                    Text(text = "Cancelar", color = Color.White)                }
+                    Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)                }
             },
             actions = {
                 TextButton(onClick = {
                     homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
                 })
                 {
-                    Text(text = "Guardar", color = Color.White)
+                    Text(text = "Guardar", color = MaterialTheme.colorScheme.secondary)
                 }
             }
         )
@@ -59,27 +65,29 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
         Column(modifier = Modifier.padding(paddingValues)) {
             Box(modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
-                .background(color = colorResource(R.color.dark_green))
+                .background(color = MaterialTheme.colorScheme.tertiary)
                 .fillMaxWidth()
                 .height(300.dp)
 
             ){
-                Column {
+                Column(modifier = Modifier.fillMaxHeight(),
+                    horizontalAlignment = Alignment.Start) {
                     Row(modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .weight(1f),
                         verticalAlignment = Alignment.CenterVertically) {
                         Text(modifier = Modifier
                             .padding(start = 20.dp, end = 40.dp) ,
                             text= "Inicio",
                             style = MaterialTheme.typography.titleLarge,
-                            color = Color.White)
+                            color = MaterialTheme.colorScheme.secondary)
                         WheelDateTimePicker(startDateTime = homeViewModel.homeState.startDateTime,
                             minDateTime = homeViewModel.homeState.startDateTime,
                             maxDateTime = homeViewModel.homeState.endDateTime,
                             timeFormat = TimeFormat.HOUR_24,
                             textColor = Color.DarkGray,
                             rowCount = 5,
-                            size = DpSize(200.dp, 200.dp),
+                            size = DpSize(300.dp, 150.dp),
                             selectorProperties = WheelPickerDefaults.selectorProperties(
                                 enabled = true,
                                 shape = RoundedCornerShape(6.dp),
@@ -90,20 +98,21 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                         }
                     }
                     Row(modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .weight(1f),
                         verticalAlignment = Alignment.CenterVertically) {
                         Text(modifier = Modifier
-                            .padding(start = 20.dp, end = 40.dp) ,
+                            .padding(start = 20.dp, end = 60.dp) ,
                             text= "Fin",
                             style = MaterialTheme.typography.titleLarge,
-                            color = Color.White)
+                            color = MaterialTheme.colorScheme.secondary)
                         WheelDateTimePicker(startDateTime = homeViewModel.homeState.startDateTime,
                             minDateTime = homeViewModel.homeState.startDateTime,
                             maxDateTime = homeViewModel.homeState.endDateTime,
                             timeFormat = TimeFormat.HOUR_24,
                             textColor = Color.DarkGray,
                             rowCount = 5,
-                            size = DpSize(200.dp, 200.dp),
+                            size = DpSize(300.dp, 150.dp),
                             selectorProperties = WheelPickerDefaults.selectorProperties(
                                 enabled = true,
                                 shape = RoundedCornerShape(6.dp),
@@ -113,7 +122,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                             snappedDateTime -> homeViewModel.onAction(HomeViewModel.HomeInputAction.IsEndDateEventChanged(snappedDateTime))
                         }
                     }
-                    Text(text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = Color.White)
+                    Text(modifier = Modifier.padding(start = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
 
 
 

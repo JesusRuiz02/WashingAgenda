@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,8 +55,8 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
             id = "2",
             userID = "u2",
             building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 3, 10, 0),
-            endDate = LocalDateTime.of(2026, 1, 3, 14, 0),
+            startDate = LocalDateTime.of(2026, 1, 13, 10, 0),
+            endDate = LocalDateTime.of(2026, 1, 13, 14, 0),
             departmentN = "8",
             color = Color(0xFFAFBBF2),
         ),
@@ -71,12 +74,15 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Agenda")},
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface),
+                title = { Text("Agenda", color = MaterialTheme.colorScheme.secondary)},
                 navigationIcon = {
                     IconButton(onClick = { homeViewModel.signOut()
                         navController.popBackStack()}){
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.secondary)
                     }
                 }
             )
@@ -88,6 +94,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ){
             Schedule(
+                hourHeight = 80.dp,
                 events = events,
                 modifier = Modifier
                     .fillMaxSize(),

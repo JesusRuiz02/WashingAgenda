@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,24 +52,29 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
     LaunchedEffect(Unit) {
         adminViewModel.getUserById(idUser)
     }
-    Scaffold(topBar = {TopAppBar(title = {Text(text = "Editar usuario", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold) },
+    Scaffold(topBar = {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
+            title = {Text(text = "Editar usuario",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.secondary) },
         navigationIcon ={
             IconButton(onClick = {
                 navController.popBackStack()
             }) {
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Go back")
+                    contentDescription = "Go back",
+                    tint = MaterialTheme.colorScheme.secondary)
             }
         })}
     ) { paddingValues ->
-        Card(modifier = Modifier.padding().fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(6.dp)){
             Column(Modifier.padding(paddingValues)) {
                 OutlinedTextField(
+                    shape = MaterialTheme.shapes.medium,
                     modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                     value = state.editUser.name,
-                    label = { Text("Nombre") },
+                    label = { Text("Nombre", color = MaterialTheme.colorScheme.primary) },
                     supportingText = {
                         state.editUserErrors["name"]?.let {
                             Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -77,25 +83,26 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.NameChanged(it)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                        focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 OutlinedTextField(
                     modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                     value = state.editUser.hours.toString(),
-                    label = { Text("Horas restantes") },
+                    shape = MaterialTheme.shapes.medium,
+                    label = { Text("Horas restantes", color = MaterialTheme.colorScheme.primary) },
                     onValueChange = {
                         val value = it.toIntOrNull() ?: 0
                         adminViewModel.onAction(AdminViewModel.AdminInputAction.HoursChanged(value)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                        focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 //Boton dropdown menu
@@ -105,9 +112,10 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     onExpandedChange = { expanded = !expanded }
                 ) {
                     OutlinedTextField(
-                        label = { Text("Edificio") },
+                        label = { Text("Edificio", color = MaterialTheme.colorScheme.primary) },
                         modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth().menuAnchor(),
                         value = state.adminBuildings[state.editUser.building].orEmpty(),
+                        shape = MaterialTheme.shapes.medium,
                         onValueChange = { },
                         readOnly = true,
                         supportingText = {
@@ -119,10 +127,10 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedBorderColor = MaterialTheme.colorScheme.secondary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                            focusedContainerColor = MaterialTheme.colorScheme.surface,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                            focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
                         )
                     )
                     ExposedDropdownMenu(expanded = expanded,
@@ -139,9 +147,10 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     }
                 }
                 OutlinedTextField(
-                    label = { Text("Número de departamento") },
+                    label = { Text("Número de departamento", color = MaterialTheme.colorScheme.primary) },
                     modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
                     value = state.editUser.departmentN,
+                    shape = MaterialTheme.shapes.medium,
                     supportingText = {
                         state.editUserErrors["departmentN"]?.let {
                             Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -150,16 +159,16 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.DepartmentChanged(it)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.surface,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surface
+                        focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
                 Button(onClick = { /*TODO*/ },
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp).fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green))) {
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {
                     Text(text = "Reiniciar contraseña", color = Color.White)
                 }
                 Button(onClick = {
@@ -173,13 +182,13 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                 },
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp).fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.dark_green)))
+                    colors = ButtonDefaults.buttonColors(containerColor  = MaterialTheme.colorScheme.secondary))
                 {
                     Text(text = "Guardar cambios", color = Color.White)
                 }
 
             }
-        }
+
 
     }
 }

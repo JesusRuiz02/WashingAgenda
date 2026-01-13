@@ -22,11 +22,11 @@ private val DarkColorScheme = darkColorScheme(
     tertiary = CleanBackGround,
 
     surface = Color.White.copy(alpha = 0.8f),
-    background = CleanBackGround,
+    background = Color.White.copy(alpha = 0.8f),
     onSecondary = CleanBackGround,
     onTertiary = CleanBackGround,
     onBackground = CleanBackGround,
-    onSurface = Color.White.copy(alpha = 0.8f)
+    onSurface = greenLight
 )
 /*
 private val LightColorScheme = lightColorScheme(
