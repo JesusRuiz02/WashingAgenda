@@ -103,7 +103,7 @@ class HomeViewModel @Inject constructor(
     }
     private suspend fun saveEvent( user: UserModel)
     {
-        val event = EventModel( userID = user.userID, startDate = homeState.eventStart, endDate = homeState.eventEnd,color = homeState.event.color)
+        val event = EventModel( userID = user.userID, startDate = homeState.eventStart, endDate = homeState.eventEnd,color = homeState.event.color, departmentN = user.departmentN, building = user.building)
         firestore
             .collection("Events")
             .document(event.userID)
