@@ -16,20 +16,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.commandiron.wheel_picker_compose.WheelDateTimePicker
 import com.commandiron.wheel_picker_compose.core.TimeFormat
-import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +49,9 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
             },
             actions = {
                 TextButton(onClick = {
-                    homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                   homeViewModel.addEvent(){
+                       homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                   }
                 })
                 {
                     Text(text = "Guardar", color = MaterialTheme.colorScheme.secondary)
@@ -81,9 +80,9 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                             text= "Inicio",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = homeViewModel.homeState.startDateTime,
-                            minDateTime = homeViewModel.homeState.startDateTime,
-                            maxDateTime = homeViewModel.homeState.endDateTime,
+                        WheelDateTimePicker(startDateTime = homeViewModel.currentTime,
+                            minDateTime = homeViewModel.currentTime,
+                            maxDateTime = homeViewModel.maxTime,
                             timeFormat = TimeFormat.HOUR_24,
                             textColor = Color.DarkGray,
                             rowCount = 5,
@@ -92,10 +91,10 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                                 enabled = true,
                                 shape = RoundedCornerShape(6.dp),
                                 color = Color.White,
-                            ),){
-                                snappedDateTime -> homeViewModel.onAction(HomeViewModel.HomeInputAction.IsStartDateEventChanged(snappedDateTime))
-
-                        }
+                            ),
+                            onSnappedDateTime = {
+                                snappedDateTime ->  homeViewModel.onAction(HomeViewModel.HomeInputAction.IsStartDateEventChanged(snappedDateTime))
+                            })
                     }
                     Row(modifier = Modifier
                         .fillMaxWidth()
@@ -106,9 +105,9 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                             text= "Fin",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = homeViewModel.homeState.startDateTime,
-                            minDateTime = homeViewModel.homeState.startDateTime,
-                            maxDateTime = homeViewModel.homeState.endDateTime,
+                        WheelDateTimePicker(startDateTime = homeViewModel.currentTime,
+                            minDateTime = homeViewModel.currentTime,
+                            maxDateTime = homeViewModel.maxTime,
                             timeFormat = TimeFormat.HOUR_24,
                             textColor = Color.DarkGray,
                             rowCount = 5,
@@ -117,10 +116,11 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                                 enabled = true,
                                 shape = RoundedCornerShape(6.dp),
                                 color = Color.White,
-                            ),)
-                        {
-                            snappedDateTime -> homeViewModel.onAction(HomeViewModel.HomeInputAction.IsEndDateEventChanged(snappedDateTime))
-                        }
+                            ),
+                            onSnappedDateTime = {
+                                snappedDateTime -> homeViewModel.onAction(HomeViewModel.HomeInputAction.IsEndDateEventChanged(snappedDateTime))
+                            })
+
                     }
                     Text(modifier = Modifier.padding(start = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
 

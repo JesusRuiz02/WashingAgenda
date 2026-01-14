@@ -22,7 +22,6 @@ class AdminViewModel @Inject constructor(
     private val auth: FirebaseAuth,
    private val firestore: FirebaseFirestore
 ) : ViewModel() {
-
     data class AdminUiState(
         val isLoading : Boolean = false,
         var users: List<UserModel> = emptyList(),

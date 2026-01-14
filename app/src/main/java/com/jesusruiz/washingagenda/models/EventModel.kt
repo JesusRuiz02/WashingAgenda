@@ -1,5 +1,6 @@
 package com.jesusruiz.washingagenda.models
 
+
 import androidx.compose.ui.graphics.Color
 import java.time.LocalDateTime
 
@@ -10,7 +11,7 @@ data class EventModel(val id: String = "",
                       val building: String = "",
                       var startDate: LocalDateTime,
                       var endDate: LocalDateTime,
-                      var status: EventStatus = EventStatus.Pending,
+                      var status: EventStatus = EventStatus.Active,
                       var color: Color
     )
 
