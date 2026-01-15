@@ -1,5 +1,6 @@
 package com.jesusruiz.washingagenda.viewModel
 
+import android.R
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +31,7 @@ class HomeViewModel @Inject constructor(
     data class HomeUIState(
         var isAddingEvent: Boolean = false,
         var user : UserModel = UserModel(),
+        var userUID: String = "",
         val eventStart: LocalDateTime = LocalDateTime.now(),
         val eventEnd: LocalDateTime = LocalDateTime.now(),
         val event: EventModel = EventModel(color = Color.DarkGray, endDate = LocalDateTime.now().plusDays(6), startDate =  LocalDateTime.now())
@@ -48,6 +50,9 @@ class HomeViewModel @Inject constructor(
     fun signOut(){
         auth.signOut()
     }
+    init {
+        getUserUID()
+    }
 
     fun onAction(action: HomeInputAction) {
         when(action){
@@ -65,12 +70,23 @@ class HomeViewModel @Inject constructor(
 
         }
     }
+    fun getUserUID()
+    {
+        homeState = homeState.copy(userUID = auth.currentUser?.uid ?: "" )
+    }
     fun addEvent(onSuccess: () -> Unit ){
         viewModelScope.launch {
             try {
-                getUserById(auth.currentUser?.uid.toString())
-                saveEvent( homeState.user)
-                onSuccess()
+                var userToSave:UserModel = homeState.user
+                if (userToSave.userID.isEmpty() && homeState.userUID.isNotEmpty()) {
+                    userToSave = getUserById(homeState.userUID) ?: UserModel()
+                }
+               if(userToSave.userID.isNotEmpty()){
+                   saveEvent(userToSave)
+                   onSuccess()
+               }else{
+                   Log.d("Error", "No se pudo obtener un usuario válido para guardar el evento.")
+               }
             }
             catch (e: Exception)
             {
@@ -78,35 +94,33 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-    fun getUserById(idUser: String){
-        viewModelScope.launch{
-            try{
+    suspend fun getUserById(idUser: String): UserModel?{
+         return try{
                 val doc = firestore
                     .collection("Users")
                     .document(idUser)
                     .get()
                     .await()
                 val user = doc.toObject(UserModel::class.java)
-                if(user != null)
-                {
+                if(user != null) {
                     homeState = homeState.copy(user = user)
+                    Log.d("user ", user.toString())
                 }
-
-
-                Log.d("user id", idUser)
+                 user
             }
             catch (e: Exception)
             {
                 Log.e("Error", e.message ?: "Error getting users")
+                null
             }
         }
-    }
     private suspend fun saveEvent( user: UserModel)
     {
-        val event = EventModel( userID = user.userID, startDate = homeState.eventStart, endDate = homeState.eventEnd,color = homeState.event.color, departmentN = user.departmentN, building = user.building)
+        val eventId = "${user.userID}_${homeState.eventStart}"
+        val event = EventModel( userID = user.userID, startDate = homeState.eventStart, endDate = homeState.eventEnd,color = homeState.event.color, departmentN = user.departmentN, building = user.building, id = eventId)
         firestore
             .collection("Events")
-            .document(event.userID)
+            .document(eventId)
             .set(event)
             .await()
         Log.d("Success", "User is saved")

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -57,6 +58,7 @@ fun Schedule(
     val maxDateCalendar = today.plusDays(postDaysPreview)
     val verticalScrollState = rememberScrollState()
     val horizontalScrollState = rememberScrollState()
+
 
     Column(modifier = Modifier.fillMaxHeight()){
         Row{
