@@ -1,6 +1,6 @@
 package com.jesusruiz.washingagenda.viewModel
 
-import android.R
+
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,13 +34,16 @@ class HomeViewModel @Inject constructor(
         var userUID: String = "",
         val eventStart: LocalDateTime = LocalDateTime.now(),
         val eventEnd: LocalDateTime = LocalDateTime.now(),
-        val event: EventModel = EventModel(color = Color.DarkGray, endDate = LocalDateTime.now().plusDays(6), startDate =  LocalDateTime.now())
+        val event: EventModel = EventModel(color = Color.DarkGray, endDate = LocalDateTime.now().plusDays(6), startDate =  LocalDateTime.now()),
+        var isLoading: Boolean = false,
+        val events: List<EventModel> = emptyList()
         )
 
     sealed class HomeInputAction{
         data class IsAddingEventChange(val value: Boolean): HomeInputAction()
         data class IsStartDateEventChanged(val value: LocalDateTime): HomeInputAction()
         data class IsEndDateEventChanged(val value: LocalDateTime): HomeInputAction()
+        data class LoadingEventsChanged(val value: Boolean): HomeInputAction()
     }
 
 
@@ -65,9 +68,43 @@ class HomeViewModel @Inject constructor(
             }
             is HomeInputAction.IsEndDateEventChanged ->{
                 homeState = homeState.copy(eventEnd = action.value)
-
+            }
+            is HomeInputAction.LoadingEventsChanged ->{
+                homeState = homeState.copy(isLoading = action.value)
             }
 
+        }
+    }
+
+    fun getEvents(onSuccess: () -> Unit){
+        viewModelScope.launch {
+            if(homeState.userUID.isEmpty())
+                getUserUID()
+            if (homeState.userUID.isNotEmpty() && homeState.user.building.isEmpty()){
+                getUserById(homeState.userUID)
+            }
+            val userBuilding = homeState.user.building
+            if(userBuilding.isEmpty())
+            {
+                Log.d("Events", "El edificio esta vacio")
+                return@launch
+            }
+            homeState = homeState.copy(isLoading = true)
+            try{
+                val querySnapshot = firestore
+                    .collection("Events")
+                    .whereEqualTo("building", userBuilding)
+                    .get()
+                    .await()
+                val eventList = querySnapshot.toObjects(EventModel::class.java)
+                homeState = homeState.copy(events = eventList)
+                Log.d("Events", "Se obtuvieron los eventos: ${eventList.size}")
+                onSuccess()
+            }
+            catch(e: Exception){
+                homeState = homeState.copy(isLoading = false)
+                Log.e("Events", "No se obtuvieron los eventos: ${e.message}")
+            }
         }
     }
     fun getUserUID()
@@ -77,6 +114,8 @@ class HomeViewModel @Inject constructor(
     fun addEvent(onSuccess: () -> Unit ){
         viewModelScope.launch {
             try {
+                if(homeState.userUID.isEmpty())
+                    getUserUID()
                 var userToSave:UserModel = homeState.user
                 if (userToSave.userID.isEmpty() && homeState.userUID.isNotEmpty()) {
                     userToSave = getUserById(homeState.userUID) ?: UserModel()

@@ -14,13 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,6 +41,11 @@ import java.time.LocalDateTime
 @Composable
 fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
 {
+    LaunchedEffect(Unit){
+        homeViewModel.getEvents(onSuccess = {
+            homeViewModel.onAction(HomeViewModel.HomeInputAction.LoadingEventsChanged(false))
+        })
+    }
     val state = homeViewModel.homeState
     val events = listOf(
         EventModel(
@@ -88,45 +93,55 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                 }
             )
         }
-    ) {
-        paddingValues ->
-
-        Box(
-            modifier = Modifier.fillMaxSize().padding(paddingValues)
-        ){
-            Schedule(
-                hourHeight = 80.dp,
-                events = events,
-                modifier = Modifier
-                    .fillMaxSize(),
-                pastDaysPreview = 6
-            )
-            IconButton(
-                modifier = Modifier.align(Alignment.BottomEnd)
-                    .padding(end = 20.dp, bottom = 20.dp)
-                    .size(75.dp),
-                onClick = {
-                    homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
-                }
+    ) { paddingValues ->
+        if (state.isLoading) {
+            Box(
+                Modifier.fillMaxSize()
+                    .padding(paddingValues)
             ) {
-                Icon(
-                    modifier = Modifier
-                        .size(75.dp),
-                    painter = painterResource(R.drawable.ic_add_fillded),
-                    contentDescription = "Add event",
-
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
-            AnimatedVisibility(visible = state.isAddingEvent,
-                modifier = Modifier.align(Alignment.BottomCenter),
-                enter = slideInVertically(
-                    tween(300),
-                    initialOffsetY = {fullHeight -> fullHeight}
-                ),
-                exit = shrinkOut(tween(500))) {
-                AddEventsView(navController,homeViewModel)
+        } else {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(paddingValues)
+                ) {
+                    Schedule(
+                        hourHeight = 80.dp,
+                        events = homeViewModel.homeState.events,
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        pastDaysPreview = 6
+                    )
+                    IconButton(
+                        modifier = Modifier.align(Alignment.BottomEnd)
+                            .padding(end = 20.dp, bottom = 20.dp)
+                            .size(75.dp),
+                        onClick = {
+                            homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier
+                                .size(75.dp),
+                            painter = painterResource(R.drawable.ic_add_fillded),
+                            contentDescription = "Add event",
+
+                            )
+                    }
+                    AnimatedVisibility(
+                        visible = state.isAddingEvent,
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                        enter = slideInVertically(
+                            tween(300),
+                            initialOffsetY = { fullHeight -> fullHeight }
+                        ),
+                        exit = shrinkOut(tween(500))) {
+                        AddEventsView(navController, homeViewModel)
+                    }
+                }
             }
-        }
     }
 }
 

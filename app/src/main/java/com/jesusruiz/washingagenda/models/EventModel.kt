@@ -9,10 +9,10 @@ data class EventModel(val id: String = "",
                       val userID: String = "",
                       val departmentN: String = "",
                       val building: String = "",
-                      var startDate: LocalDateTime,
-                      var endDate: LocalDateTime,
+                      var startDate: LocalDateTime = LocalDateTime.now(),
+                      var endDate: LocalDateTime = LocalDateTime.now(),
                       var status: EventStatus = EventStatus.Active,
-                      var color: Color
+                      var color: Color = Color.DarkGray
     )
 
 enum class EventStatus {Pending, Active, Completed,Canceled}
