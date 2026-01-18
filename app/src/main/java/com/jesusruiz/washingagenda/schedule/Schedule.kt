@@ -45,6 +45,7 @@ import kotlin.math.roundToInt
 fun Schedule(
     events: List<EventModel>,
     modifier: Modifier = Modifier,
+    onEventClick: (EventModel) -> Unit = {},
     eventContent: @Composable (event: EventModel) -> Unit = { BasicEvent(event = it) },
     dayHeader: @Composable (day: LocalDate) -> Unit = { BasicDayHeader(day = it) },
     dayWidth: Dp = 256.dp,
@@ -81,6 +82,7 @@ fun Schedule(
                     .verticalScroll(verticalScrollState)
                     .horizontalScroll(horizontalScrollState),
                 eventContent = eventContent,
+                onEventClick = onEventClick,
                 dayWidth = dayWidth,
                 hourHeight = hourHeight,
                 pastDaysPreview = pastDaysPreview,

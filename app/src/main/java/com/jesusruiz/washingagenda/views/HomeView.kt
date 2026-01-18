@@ -3,6 +3,8 @@ package com.jesusruiz.washingagenda.views
 
 
 import Schedule
+import com.jesusruiz.washingagenda.events.EditEventsView
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.shrinkOut
@@ -33,6 +35,8 @@ import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.events.AddEventsView
 import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.models.EventModel
+import com.jesusruiz.washingagenda.toDate
+import com.jesusruiz.washingagenda.toHexString
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 import java.time.LocalDateTime
 
@@ -41,10 +45,8 @@ import java.time.LocalDateTime
 @Composable
 fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
 {
-    LaunchedEffect(Unit){
-        homeViewModel.getEvents(onSuccess = {
-            homeViewModel.onAction(HomeViewModel.HomeInputAction.LoadingEventsChanged(false))
-        })
+    LaunchedEffect(Unit) {
+        homeViewModel.getEvents()
     }
     val state = homeViewModel.homeState
     val events = listOf(
@@ -52,28 +54,28 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
             id = "1",
             userID = "u1",
             building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 2, 10, 0),
-            endDate = LocalDateTime.of(2026, 1, 2, 12, 0),
-            color = Color(0xFFAFBBF2),
+            startDate = LocalDateTime.of(2026, 1, 2, 10, 0).toDate(),
+            endDate = LocalDateTime.of(2026, 1, 2, 12, 0).toDate(),
+            color = Color(0xFFAFBBF2).toHexString(),
             departmentN = "10"
         ),
         EventModel(
             id = "2",
             userID = "u2",
             building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 13, 10, 0),
-            endDate = LocalDateTime.of(2026, 1, 13, 14, 0),
+            startDate = LocalDateTime.of(2026, 1, 13, 10, 0).toDate(),
+            endDate = LocalDateTime.of(2026, 1, 13, 14, 0).toDate(),
             departmentN = "8",
-            color = Color(0xFFAFBBF2),
+            color = Color(0xFFAFBBF2).toHexString(),
         ),
         EventModel(
             id = "4",
             userID = "u211",
             building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 3, 12, 0),
-            endDate = LocalDateTime.of(2026, 1, 3, 14, 0),
+            startDate = LocalDateTime.of(2026, 1, 3, 12, 0).toDate(),
+            endDate = LocalDateTime.of(2026, 1, 3, 14, 0).toDate(),
             departmentN = "8",
-            color = Color(0xFFAFBBF2),
+            color = Color(0xFFAFBBF2).toHexString(),
         )
 
     )
@@ -112,7 +114,10 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                         events = homeViewModel.homeState.events,
                         modifier = Modifier
                             .fillMaxSize(),
-                        pastDaysPreview = 6
+                        pastDaysPreview = 2,
+                        onEventClick = { clickedEvent ->
+                            homeViewModel.onAction(HomeViewModel.HomeInputAction.EditingEventsChanged(clickedEvent))
+                        }
                     )
                     IconButton(
                         modifier = Modifier.align(Alignment.BottomEnd)
@@ -139,6 +144,19 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                         ),
                         exit = shrinkOut(tween(500))) {
                         AddEventsView(navController, homeViewModel)
+                    }
+                    AnimatedVisibility(
+                        visible = state.editingEvent != null,
+                        modifier = Modifier.align(Alignment.BottomCenter),
+                        enter = slideInVertically(
+                            tween(300),
+                            initialOffsetY = { fullHeight -> fullHeight }
+                        ),
+                        exit = shrinkOut(tween(500))) {
+                        state.editingEvent?.let {
+                            editEvent ->
+                            EditEventsView(homeViewModel, navController, editEvent)
+                        }
                     }
                 }
             }

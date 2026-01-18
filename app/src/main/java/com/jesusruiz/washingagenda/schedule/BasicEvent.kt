@@ -1,6 +1,7 @@
 package com.jesusruiz.washingagenda.schedule
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.jesusruiz.washingagenda.models.EventModel
+import com.jesusruiz.washingagenda.toComposeColor
+import com.jesusruiz.washingagenda.toDate
+import com.jesusruiz.washingagenda.toHexString
+import com.jesusruiz.washingagenda.toLocalDateTime
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 
 import java.time.LocalDateTime
@@ -24,17 +29,20 @@ import java.time.format.DateTimeFormatter
 
 val EventTimeFormatter = DateTimeFormatter.ofPattern("hh:mm a")
 @Composable
-fun BasicEvent(event: EventModel, modifier: Modifier = Modifier){
+fun BasicEvent(event: EventModel,
+               modifier: Modifier = Modifier,
+               onClick: (EventModel) -> Unit = {}){
     Column(
         modifier = modifier
+            .clickable(onClick = { onClick(event) })
             .fillMaxSize()
             .padding(end = 10.dp, bottom = 2.dp)
-            .background(event.color, shape = RoundedCornerShape(12.dp))
+            .background(event.color.toComposeColor(), shape = RoundedCornerShape(12.dp))
             .padding(10.dp)
     ) {
         Text(
-            text = "${event.startDate.format(EventTimeFormatter)} - ${
-                event.endDate.format(
+            text = "${event.startDate!!.toLocalDateTime().format(EventTimeFormatter)} - ${
+                event.endDate!!.toLocalDateTime().format(
                     EventTimeFormatter
                 )
             }",
@@ -50,21 +58,21 @@ fun BasicEvent(event: EventModel, modifier: Modifier = Modifier){
 
 val sampleEvents = listOf(
     EventModel(
-        startDate = LocalDateTime.parse("2026-01-02T11:00:00"),
-        endDate = LocalDateTime.parse("2026-01-02T12:00:00"),
-        color = Color(0xFFAFBBF2),
+        startDate = LocalDateTime.parse("2026-01-02T11:00:00").toDate(),
+        endDate = LocalDateTime.parse("2026-01-02T12:00:00").toDate(),
+        color = Color(0xFFAFBBF2).toHexString(),
         departmentN = "10"
     ),
     EventModel(
-        startDate = LocalDateTime.parse("2026-01-03T12:00:00"),
-        endDate = LocalDateTime.parse("2026-01-03T12:00:00"),
-        color = Color(0xFFAFBBF2),
+        startDate = LocalDateTime.parse("2026-01-03T12:00:00").toDate(),
+        endDate = LocalDateTime.parse("2026-01-03T12:00:00").toDate(),
+        color = Color(0xFFAFBBF2).toHexString(),
         departmentN = "8"
     ),
     EventModel(
-        startDate = LocalDateTime.parse("2026-01-02T13:00:00"),
-        endDate = LocalDateTime.parse("2026-01-02T14:00:00"),
-        color = Color(0xFFAFBBF2),
+        startDate = LocalDateTime.parse("2026-01-02T13:00:00").toDate(),
+        endDate = LocalDateTime.parse("2026-01-02T14:00:00").toDate(),
+        color = Color(0xFFAFBBF2).toHexString(),
         departmentN = "10"
     )
 )
@@ -79,6 +87,10 @@ fun EventPreview(
     @PreviewParameter(EventsProvider::class) event: EventModel,
 ) {
     WashingAgendaTheme {
-        BasicEvent(event, modifier = Modifier.sizeIn(maxHeight = 64.dp))
+        BasicEvent(event,
+            modifier = Modifier.sizeIn(maxHeight = 64.dp),
+            onClick = {clickedEvent ->
+                println("Event clicked: $clickedEvent")
+            })
     }
 }

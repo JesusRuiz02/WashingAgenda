@@ -1,6 +1,7 @@
 package com.jesusruiz.washingagenda.schedule
 
 import com.jesusruiz.washingagenda.models.EventModel
+import com.jesusruiz.washingagenda.toLocalDateTime
 import kotlin.math.max
 
 data class VisualEvent(
@@ -24,7 +25,7 @@ fun arrangeEvents(events: List<EventModel>): List<VisualEvent> {
         var j = i + 1
         while (j < sortedVisualEvents.size) {
             val nextEvent = sortedVisualEvents[j]
-            if (nextEvent.event.startDate < currentEvent.event.endDate) {
+            if (nextEvent.event.startDate!!.toLocalDateTime() < currentEvent.event.endDate!!.toLocalDateTime()) {
                 collisionGroup.add(nextEvent)
             }
             j++
@@ -39,7 +40,7 @@ fun arrangeEvents(events: List<EventModel>): List<VisualEvent> {
                 var placed = false
                 for (track in tracks) {
                     val lastEventInTrack = track.last()
-                    if (eventInGroup.event.startDate >= lastEventInTrack.event.endDate) {
+                    if (eventInGroup.event.startDate!!.toLocalDateTime() >= lastEventInTrack.event.endDate!!.toLocalDateTime()) {
                         track.add(eventInGroup)
                         placed = true
                         break

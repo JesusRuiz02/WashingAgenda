@@ -1,10 +1,7 @@
 package com.jesusruiz.washingagenda.schedule
 
 
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -17,7 +14,9 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jesusruiz.washingagenda.models.EventModel
+import com.jesusruiz.washingagenda.toLocalDateTime
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
@@ -52,6 +51,7 @@ private fun Modifier.scheduleEvent(event: EventModel,
 fun BasicSchedule(
     events: List<EventModel>,
     modifier: Modifier = Modifier,
+    onEventClick: (EventModel) -> Unit = {},
     eventContent: @Composable (event: EventModel) -> Unit = { BasicEvent(event = it) },
     dayWidth: Dp = 256.dp,
     hourHeight: Dp = 64.dp,
@@ -79,7 +79,10 @@ fun BasicSchedule(
         visualEvents.forEach { visualEvent ->
             Box(modifier = Modifier.scheduleEvent(visualEvent.event,visualEvent.widthFraction, visualEvent.xOffsetFraction))
             {
-                eventContent(visualEvent.event)
+                BasicEvent(
+                    event = visualEvent.event,
+                    onClick = onEventClick
+                )
             }
         }
     },
@@ -108,7 +111,7 @@ fun BasicSchedule(
             val eventData = measurable.parentData as EventParentData
             val event = eventData.event
             val eventWidthPx = (dayWidthPx * eventData.widthFraction).roundToInt()
-            val durationMinutes = ChronoUnit.MINUTES.between(event.startDate, event.endDate)
+            val durationMinutes = ChronoUnit.MINUTES.between(event.startDate!!.toLocalDateTime(), event.endDate!!.toLocalDateTime())
             val eventHeightPx= ((durationMinutes/60) * hourHeightPx).roundToInt().coerceAtLeast(0)
             val placeable = measurable.measure(
                 constraints.copy(minWidth = eventWidthPx, maxWidth = eventWidthPx, minHeight = eventHeightPx, maxHeight = eventHeightPx)
@@ -121,8 +124,9 @@ fun BasicSchedule(
 
         layout(contentWidth,contentHeight){
             eventPlaceables.forEach{(placeable, event, eventData ) ->
-                val offsetMinutes = ChronoUnit.MINUTES.between(LocalTime.MIN, event.startDate.toLocalTime())
-                val offsetDays = ChronoUnit.DAYS.between(minDateCalendar, event.startDate.toLocalDate()).toInt()
+                val eventStartDateTime = event.startDate?.toLocalDateTime() ?: LocalDateTime.now()
+                val offsetMinutes = ChronoUnit.MINUTES.between(LocalTime.MIN, eventStartDateTime.toLocalTime())
+                val offsetDays = ChronoUnit.DAYS.between(minDateCalendar, eventStartDateTime.toLocalDate()).toInt()
                 val eventY = ((offsetMinutes / 60f) * hourHeightPx).roundToInt()
                 val eventX = (offsetDays * dayWidthPx).roundToInt()
                 val xOffsetPx = (dayWidthPx * eventData.xOffsetFraction).roundToInt()
