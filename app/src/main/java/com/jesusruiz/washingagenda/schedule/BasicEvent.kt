@@ -37,12 +37,12 @@ fun BasicEvent(event: EventModel,
             .clickable(onClick = { onClick(event) })
             .fillMaxSize()
             .padding(end = 10.dp, bottom = 2.dp)
-            .background(event.color.toComposeColor(), shape = RoundedCornerShape(12.dp))
+            .background(event.color, shape = RoundedCornerShape(12.dp))
             .padding(10.dp)
     ) {
         Text(
-            text = "${event.startDate!!.toLocalDateTime().format(EventTimeFormatter)} - ${
-                event.endDate!!.toLocalDateTime().format(
+            text = "${event.startDate!!.format(EventTimeFormatter)} - ${
+                event.endDate!!.format(
                     EventTimeFormatter
                 )
             }",
@@ -58,21 +58,21 @@ fun BasicEvent(event: EventModel,
 
 val sampleEvents = listOf(
     EventModel(
-        startDate = LocalDateTime.parse("2026-01-02T11:00:00").toDate(),
-        endDate = LocalDateTime.parse("2026-01-02T12:00:00").toDate(),
-        color = Color(0xFFAFBBF2).toHexString(),
+        startDate = LocalDateTime.parse("2026-01-02T11:00:00"),
+        endDate = LocalDateTime.parse("2026-01-02T12:00:00"),
+        color = Color(0xFFAFBBF2),
         departmentN = "10"
     ),
     EventModel(
-        startDate = LocalDateTime.parse("2026-01-03T12:00:00").toDate(),
-        endDate = LocalDateTime.parse("2026-01-03T12:00:00").toDate(),
-        color = Color(0xFFAFBBF2).toHexString(),
+        startDate = LocalDateTime.parse("2026-01-03T12:00:00"),
+        endDate = LocalDateTime.parse("2026-01-03T12:00:00"),
+        color = Color(0xFFAFBBF2),
         departmentN = "8"
     ),
     EventModel(
-        startDate = LocalDateTime.parse("2026-01-02T13:00:00").toDate(),
-        endDate = LocalDateTime.parse("2026-01-02T14:00:00").toDate(),
-        color = Color(0xFFAFBBF2).toHexString(),
+        startDate = LocalDateTime.parse("2026-01-02T13:00:00"),
+        endDate = LocalDateTime.parse("2026-01-02T14:00:00"),
+        color = Color(0xFFAFBBF2),
         departmentN = "10"
     )
 )

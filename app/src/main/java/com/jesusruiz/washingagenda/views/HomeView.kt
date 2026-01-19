@@ -4,7 +4,7 @@ package com.jesusruiz.washingagenda.views
 
 import Schedule
 import com.jesusruiz.washingagenda.events.EditEventsView
-
+import androidx.compose.runtime.getValue
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.shrinkOut
@@ -28,17 +28,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.events.AddEventsView
 import com.jesusruiz.washingagenda.R
-import com.jesusruiz.washingagenda.models.EventModel
-import com.jesusruiz.washingagenda.toDate
-import com.jesusruiz.washingagenda.toHexString
+import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
-import java.time.LocalDateTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,37 +44,8 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
     LaunchedEffect(Unit) {
         homeViewModel.getEvents()
     }
-    val state = homeViewModel.homeState
-    val events = listOf(
-        EventModel(
-            id = "1",
-            userID = "u1",
-            building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 2, 10, 0).toDate(),
-            endDate = LocalDateTime.of(2026, 1, 2, 12, 0).toDate(),
-            color = Color(0xFFAFBBF2).toHexString(),
-            departmentN = "10"
-        ),
-        EventModel(
-            id = "2",
-            userID = "u2",
-            building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 13, 10, 0).toDate(),
-            endDate = LocalDateTime.of(2026, 1, 13, 14, 0).toDate(),
-            departmentN = "8",
-            color = Color(0xFFAFBBF2).toHexString(),
-        ),
-        EventModel(
-            id = "4",
-            userID = "u211",
-            building = "b1",
-            startDate = LocalDateTime.of(2026, 1, 3, 12, 0).toDate(),
-            endDate = LocalDateTime.of(2026, 1, 3, 14, 0).toDate(),
-            departmentN = "8",
-            color = Color(0xFFAFBBF2).toHexString(),
-        )
+    val state by homeViewModel.homeState
 
-    )
 
     Scaffold(
         topBar = {
@@ -111,12 +78,12 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                 ) {
                     Schedule(
                         hourHeight = 80.dp,
-                        events = homeViewModel.homeState.events,
+                        events = state.events,
                         modifier = Modifier
                             .fillMaxSize(),
                         pastDaysPreview = 2,
                         onEventClick = { clickedEvent ->
-                            homeViewModel.onAction(HomeViewModel.HomeInputAction.EditingEventsChanged(clickedEvent))
+                            homeViewModel.onAction(HomeInputAction.EditingEventsChanged(clickedEvent))
                         }
                     )
                     IconButton(
@@ -124,7 +91,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                             .padding(end = 20.dp, bottom = 20.dp)
                             .size(75.dp),
                         onClick = {
-                            homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                            homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
                         }
                     ) {
                         Icon(

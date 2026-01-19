@@ -1,6 +1,4 @@
-import android.util.Log
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,20 +7,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.ParentDataModifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.type.Fraction
 import com.jesusruiz.washingagenda.schedule.BasicDayHeader
 import com.jesusruiz.washingagenda.schedule.BasicEvent
 import com.jesusruiz.washingagenda.schedule.ScheduleHeader
@@ -30,12 +18,8 @@ import com.jesusruiz.washingagenda.schedule.ScheduleSideBar
 import com.jesusruiz.washingagenda.schedule.sampleEvents
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.schedule.BasicSchedule
-import com.jesusruiz.washingagenda.schedule.arrangeEvents
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 import java.time.LocalDate
-import java.time.LocalTime
-import java.time.temporal.ChronoUnit
-import kotlin.math.roundToInt
 
 
 

@@ -51,28 +51,37 @@ kapt {
 }
 
 dependencies {
-
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.navigation)
-    implementation(libs.kalendar)
-    implementation(platform(libs.firebaseBom))
-    implementation(libs.kalendarfoundation)
-    implementation(libs.firebaseAuth)
+    implementation("androidx.compose.animation:animation")
+
     implementation(libs.hilt)
     kapt(libs.hiltCompiler)
     implementation(libs.hiltCompose)
-    implementation("androidx.compose.animation:animation")
+
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAuth)
     implementation(libs.firebaseFirestore)
-    testImplementation(libs.junit)
+
+    implementation(libs.kalendar)
+    implementation(libs.kalendarfoundation)
     implementation(libs.wheelPicker)
+
+
+
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.firebaseBom))
+
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

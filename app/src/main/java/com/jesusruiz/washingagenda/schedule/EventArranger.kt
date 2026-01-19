@@ -25,7 +25,7 @@ fun arrangeEvents(events: List<EventModel>): List<VisualEvent> {
         var j = i + 1
         while (j < sortedVisualEvents.size) {
             val nextEvent = sortedVisualEvents[j]
-            if (nextEvent.event.startDate!!.toLocalDateTime() < currentEvent.event.endDate!!.toLocalDateTime()) {
+            if (nextEvent.event.startDate!! < currentEvent.event.endDate!!) {
                 collisionGroup.add(nextEvent)
             }
             j++
@@ -40,7 +40,7 @@ fun arrangeEvents(events: List<EventModel>): List<VisualEvent> {
                 var placed = false
                 for (track in tracks) {
                     val lastEventInTrack = track.last()
-                    if (eventInGroup.event.startDate!!.toLocalDateTime() >= lastEventInTrack.event.endDate!!.toLocalDateTime()) {
+                    if (eventInGroup.event.startDate!! >= lastEventInTrack.event.endDate!!) {
                         track.add(eventInGroup)
                         placed = true
                         break

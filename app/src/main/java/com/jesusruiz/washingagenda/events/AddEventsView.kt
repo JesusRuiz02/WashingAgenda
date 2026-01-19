@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.commandiron.wheel_picker_compose.WheelDateTimePicker
 import com.commandiron.wheel_picker_compose.core.TimeFormat
+import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,14 +44,14 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                     },
             navigationIcon = {
                 TextButton (onClick = {
-                    homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))})
+                    homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.value.isAddingEvent))})
                 {
                     Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)                }
             },
             actions = {
                 TextButton(onClick = {
                    homeViewModel.addEvent(){
-                       homeViewModel.onAction(HomeViewModel.HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                       homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.value.isAddingEvent))
                    }
                 })
                 {
@@ -93,7 +94,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                                 color = Color.White,
                             ),
                             onSnappedDateTime = {
-                                snappedDateTime ->  homeViewModel.onAction(HomeViewModel.HomeInputAction.IsStartDateEventChanged(snappedDateTime))
+                                snappedDateTime ->  homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(snappedDateTime))
                             })
                     }
                     Row(modifier = Modifier
@@ -118,7 +119,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                                 color = Color.White,
                             ),
                             onSnappedDateTime = {
-                                snappedDateTime -> homeViewModel.onAction(HomeViewModel.HomeInputAction.IsEndDateEventChanged(snappedDateTime))
+                                snappedDateTime -> homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(snappedDateTime))
                             })
 
                     }

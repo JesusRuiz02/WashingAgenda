@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +29,7 @@ import com.commandiron.wheel_picker_compose.core.TimeFormat
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.toLocalDateTime
+import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,14 +46,14 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
             },
             navigationIcon = {
                 TextButton (onClick = {
-                    homeViewModel.onAction(HomeViewModel.HomeInputAction.CancelEditingEvent)})
+                    homeViewModel.onAction(HomeInputAction.CancelEditingEvent)})
                 {
                     Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)                }
             },
             actions = {
                 TextButton(onClick = {
-                    homeViewModel.addEvent(){
-                        homeViewModel.onAction(HomeViewModel.HomeInputAction.CancelEditingEvent)
+                    homeViewModel.editEvent(){
+                        homeViewModel.onAction(HomeInputAction.CancelEditingEvent)
                     }
                 })
                 {
@@ -83,7 +83,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                             text= "Inicio",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = event.startDate!!.toLocalDateTime(),
+                        WheelDateTimePicker(startDateTime = event.startDate!!,
                             minDateTime = homeViewModel.currentTime,
                             maxDateTime = homeViewModel.maxTime,
                             timeFormat = TimeFormat.HOUR_24,
@@ -96,7 +96,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                                 color = Color.White,
                             ),
                             onSnappedDateTime = {
-                                    snappedDateTime ->  homeViewModel.onAction(HomeViewModel.HomeInputAction.IsStartDateEventChanged(snappedDateTime))
+                                    snappedDateTime ->  homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(snappedDateTime))
                             })
                     }
                     Row(modifier = Modifier
@@ -108,7 +108,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                             text= "Fin",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = event.startDate!!.toLocalDateTime(),
+                        WheelDateTimePicker(startDateTime = event.startDate!!,
                             minDateTime = homeViewModel.currentTime,
                             maxDateTime = homeViewModel.maxTime,
                             timeFormat = TimeFormat.HOUR_24,
@@ -121,12 +121,14 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                                 color = Color.White,
                             ),
                             onSnappedDateTime = {
-                                    snappedDateTime -> homeViewModel.onAction(HomeViewModel.HomeInputAction.IsEndDateEventChanged(snappedDateTime))
+                                    snappedDateTime -> homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(snappedDateTime))
                             })
 
                     }
                     Text(modifier = Modifier.padding(start = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
-
+                    TextButton(modifier = Modifier.padding(start = 20.dp),onClick = { /*TODO*/ }) {
+                        Text(modifier = Modifier.padding(start = 20.dp),text = "Eliminar evento",style = MaterialTheme.typography.titleLarge)
+                    }
 
 
                 }

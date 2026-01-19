@@ -2,9 +2,8 @@ package com.jesusruiz.washingagenda.viewModel
 
 
 import android.util.Log
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,14 +11,38 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import com.jesusruiz.washingagenda.models.EventModel
+import com.jesusruiz.washingagenda.models.EventStatus
 import com.jesusruiz.washingagenda.models.UserModel
+import com.jesusruiz.washingagenda.toComposeColor
 import com.jesusruiz.washingagenda.toDate
 import com.jesusruiz.washingagenda.toHexString
+import com.jesusruiz.washingagenda.toLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import javax.inject.Inject
+
+data class HomeUIState(
+    var isAddingEvent: Boolean = false,
+    var user : UserModel = UserModel(),
+    var userUID: String = "",
+    val eventStart: LocalDateTime = LocalDateTime.now(),
+    val eventEnd: LocalDateTime = LocalDateTime.now(),
+    val selectedColor: Color = Color.Blue,
+    var isLoading: Boolean = false,
+    val editingEvent: EventModel? = null,
+    val events: List<EventModel> = emptyList(),
+)
+
+sealed class HomeInputAction{
+    data class IsAddingEventChange(val value: Boolean): HomeInputAction()
+    data class IsStartDateEventChanged(val value: LocalDateTime): HomeInputAction()
+    data class IsEndDateEventChanged(val value: LocalDateTime): HomeInputAction()
+    data class LoadingEventsChanged(val value: Boolean): HomeInputAction()
+    data class EditingEventsChanged(val value: EventModel): HomeInputAction()
+    object CancelEditingEvent: HomeInputAction()
+}
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -31,30 +54,10 @@ class HomeViewModel @Inject constructor(
     val currentTime: LocalDateTime = LocalDateTime.now()
     val maxTime: LocalDateTime = LocalDateTime.now().plusDays(6)
 
-    data class HomeUIState(
-        var isAddingEvent: Boolean = false,
-        var user : UserModel = UserModel(),
-        var userUID: String = "",
-        val eventStart: LocalDateTime = LocalDateTime.now(),
-        val eventEnd: LocalDateTime = LocalDateTime.now(),
-        val selectedColor: Color = Color.Blue,
-        var isLoading: Boolean = false,
-        val editingEvent: EventModel? = null,
-        val events: List<EventModel> = emptyList(),
-        )
 
-    sealed class HomeInputAction{
-        data class IsAddingEventChange(val value: Boolean): HomeInputAction()
-        data class IsStartDateEventChanged(val value: LocalDateTime): HomeInputAction()
-        data class IsEndDateEventChanged(val value: LocalDateTime): HomeInputAction()
-        data class LoadingEventsChanged(val value: Boolean): HomeInputAction()
-        data class EditingEventsChanged(val value: EventModel): HomeInputAction()
-        object CancelEditingEvent: HomeInputAction()
-    }
+    private val _homeState = mutableStateOf(HomeUIState())
+    val homeState: State<HomeUIState> = _homeState
 
-
-    var homeState by mutableStateOf(HomeUIState())
-            private set
 
     fun signOut(){
         auth.signOut()
@@ -66,23 +69,23 @@ class HomeViewModel @Inject constructor(
     fun onAction(action: HomeInputAction) {
         when(action){
             is HomeInputAction.IsAddingEventChange ->{
-               homeState = homeState.copy( isAddingEvent = action.value)
+               _homeState.value = _homeState.value.copy( isAddingEvent = action.value)
             }
             is HomeInputAction.IsStartDateEventChanged ->
             {
-                homeState = homeState.copy(eventStart = action.value)
+                _homeState.value = _homeState.value.copy(eventStart = action.value)
             }
             is HomeInputAction.IsEndDateEventChanged ->{
-                homeState = homeState.copy(eventEnd = action.value)
+                _homeState.value = _homeState.value.copy(eventEnd = action.value)
             }
             is HomeInputAction.LoadingEventsChanged ->{
-                homeState = homeState.copy(isLoading = action.value)
+                _homeState.value = _homeState.value.copy(isLoading = action.value)
             }
             is HomeInputAction.EditingEventsChanged ->{
-                homeState = homeState.copy(editingEvent = action.value)
+                _homeState.value = _homeState.value.copy(editingEvent = action.value)
             }
             is HomeInputAction.CancelEditingEvent ->{
-                homeState = homeState.copy(editingEvent = null)
+                _homeState.value = _homeState.value.copy(editingEvent = null)
             }
 
 
@@ -90,9 +93,9 @@ class HomeViewModel @Inject constructor(
     }
 
     fun gettingEventById(id: String){
-        for (event in homeState.events){
+        for (event in _homeState.value.events){
             if(event.id == id){
-                homeState = homeState.copy(editingEvent = event)
+                _homeState.value = _homeState.value.copy(editingEvent = event)
             }
         }
     }
@@ -105,18 +108,18 @@ class HomeViewModel @Inject constructor(
 
     fun getEvents(){
         viewModelScope.launch {
-            if(homeState.userUID.isEmpty())
+            if(_homeState.value.userUID.isEmpty())
                 getUserUID()
-            if (homeState.userUID.isNotEmpty() && homeState.user.building.isEmpty()){
-                getUserById(homeState.userUID)
+            if (_homeState.value.userUID.isNotEmpty() && _homeState.value.user.building.isEmpty()){
+                getUserById(_homeState.value.userUID)
             }
-            val userBuilding = homeState.user.building
+            val userBuilding = _homeState.value.user.building
             if(userBuilding.isEmpty())
             {
                 Log.d("Events", "El edificio esta vacio")
                 return@launch
             }
-            homeState = homeState.copy(isLoading = true)
+            _homeState.value = _homeState.value.copy(isLoading = true)
             firestore
                 .collection("Events")
                 .whereEqualTo("building", userBuilding)
@@ -124,13 +127,30 @@ class HomeViewModel @Inject constructor(
                 .collect {
                     querySnapshot ->
                     try{
-                        val eventList = querySnapshot.toObjects(EventModel::class.java)
-                        homeState = homeState.copy(events = eventList,
-                            isLoading = false)
-                        Log.d("Events", "Eventos actualizados")
+                        val eventList = querySnapshot.documents.mapNotNull {
+                            document ->
+                            val start = document.getDate("startDate")?.toLocalDateTime()
+                            val end = document.getDate("endDate")?.toLocalDateTime()
+                            val color = document.getString("color")?.toComposeColor() ?: Color.Blue
+                            EventModel(
+                                id = document.id,
+                                userID = document.getString("userID") ?: "",
+                                departmentN = document.getString("departmentN") ?: "",
+                                building = document.getString("building") ?: "",
+                                startDate = start,
+                                endDate = end,
+                                color = color,
+                                status = EventStatus.valueOf(document.getString("status") ?: "Active")
+                            )
+                        }
+                        if(eventList.isNotEmpty()){
+                            _homeState.value = _homeState.value.copy(events = eventList,
+                                isLoading = false)
+                            Log.d("Events", "Eventos actualizados ${eventList}")
+                        }
                     }
                     catch (e: Exception){
-                        homeState = homeState.copy(isLoading = false)
+                        _homeState.value = _homeState.value.copy(isLoading = false)
                         Log.e("Events", "No se pudieron actualizar los eventos: ${e.message}")
                     }
                 }
@@ -138,16 +158,16 @@ class HomeViewModel @Inject constructor(
     }
     fun getUserUID()
     {
-        homeState = homeState.copy(userUID = auth.currentUser?.uid ?: "" )
+        _homeState.value = _homeState.value.copy(userUID = auth.currentUser?.uid ?: "" )
     }
     fun addEvent(onSuccess: () -> Unit ){
         viewModelScope.launch {
             try {
-                if(homeState.userUID.isEmpty())
+                if(_homeState.value.userUID.isEmpty())
                     getUserUID()
-                var userToSave:UserModel = homeState.user
-                if (userToSave.userID.isEmpty() && homeState.userUID.isNotEmpty()) {
-                    userToSave = getUserById(homeState.userUID) ?: UserModel()
+                var userToSave:UserModel = _homeState.value.user
+                if (userToSave.userID.isEmpty() && _homeState.value.userUID.isNotEmpty()) {
+                    userToSave = getUserById(_homeState.value.userUID) ?: UserModel()
                 }
                if(userToSave.userID.isNotEmpty()){
                    saveEvent(userToSave)
@@ -171,7 +191,7 @@ class HomeViewModel @Inject constructor(
                     .await()
                 val user = doc.toObject(UserModel::class.java)
                 if(user != null) {
-                    homeState = homeState.copy(user = user)
+                    _homeState.value = _homeState.value.copy(user = user)
                     Log.d("user ", user.toString())
                 }
                  user
@@ -184,15 +204,21 @@ class HomeViewModel @Inject constructor(
         }
     private suspend fun saveEvent( user: UserModel)
     {
-        val eventId = "${user.userID}_${homeState.eventStart}"
-        val event = EventModel( userID = user.userID
-            , startDate = homeState.eventStart.toDate(), endDate = homeState.eventEnd.toDate(),
-            color = homeState.selectedColor.toHexString(),
-            departmentN = user.departmentN, building = user.building, id = eventId)
+        val eventId = "${user.userID}_${_homeState.value.eventStart}"
+       val data = mapOf(
+           "id" to eventId,
+           "userID" to user.userID,
+           "startDate" to _homeState.value.eventStart.toDate(),
+           "endDate" to _homeState.value.eventEnd.toDate(),
+           "color" to _homeState.value.selectedColor.toHexString(),
+           "building" to user.building,
+           "departmentN" to user.departmentN,
+           "status" to "Active"
+       )
         firestore
             .collection("Events")
             .document(eventId)
-            .set(event)
+            .set(data)
             .await()
         Log.d("Success", "User is saved")
     }

@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.jesusruiz.washingagenda.models.EventModel
+import com.jesusruiz.washingagenda.toDate
 import com.jesusruiz.washingagenda.toLocalDateTime
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -111,7 +112,7 @@ fun BasicSchedule(
             val eventData = measurable.parentData as EventParentData
             val event = eventData.event
             val eventWidthPx = (dayWidthPx * eventData.widthFraction).roundToInt()
-            val durationMinutes = ChronoUnit.MINUTES.between(event.startDate!!.toLocalDateTime(), event.endDate!!.toLocalDateTime())
+            val durationMinutes = ChronoUnit.MINUTES.between(event.startDate!!, event.endDate!!)
             val eventHeightPx= ((durationMinutes/60) * hourHeightPx).roundToInt().coerceAtLeast(0)
             val placeable = measurable.measure(
                 constraints.copy(minWidth = eventWidthPx, maxWidth = eventWidthPx, minHeight = eventHeightPx, maxHeight = eventHeightPx)
@@ -124,9 +125,9 @@ fun BasicSchedule(
 
         layout(contentWidth,contentHeight){
             eventPlaceables.forEach{(placeable, event, eventData ) ->
-                val eventStartDateTime = event.startDate?.toLocalDateTime() ?: LocalDateTime.now()
-                val offsetMinutes = ChronoUnit.MINUTES.between(LocalTime.MIN, eventStartDateTime.toLocalTime())
-                val offsetDays = ChronoUnit.DAYS.between(minDateCalendar, eventStartDateTime.toLocalDate()).toInt()
+                val eventStartDateTime = event.startDate
+                val offsetMinutes = ChronoUnit.MINUTES.between(LocalTime.MIN, eventStartDateTime)
+                val offsetDays = ChronoUnit.DAYS.between(minDateCalendar, eventStartDateTime).toInt()
                 val eventY = ((offsetMinutes / 60f) * hourHeightPx).roundToInt()
                 val eventX = (offsetDays * dayWidthPx).roundToInt()
                 val xOffsetPx = (dayWidthPx * eventData.xOffsetFraction).roundToInt()
