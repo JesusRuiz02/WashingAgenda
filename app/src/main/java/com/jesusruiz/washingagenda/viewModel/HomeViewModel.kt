@@ -100,10 +100,26 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+   fun deleteEvent(onSuccess: () -> Unit){
+        viewModelScope.launch {
+
+            try {
+                val status = hashMapOf(
+                    "status" to "Canceled"
+                )
+                firestore.collection("Events").document(_homeState.value.editingEvent!!.id)
+                    .update(status as Map<String, Any>).await()
+                onSuccess()
+            } catch (e: Exception) {
+                Log.d("Error", e.toString())
+            }
+        }
+    }
 
     fun editEvent(onSuccess: () -> Unit){
+        viewModelScope.launch {
 
-
+        }
     }
 
     fun getEvents(){
@@ -123,6 +139,7 @@ class HomeViewModel @Inject constructor(
             firestore
                 .collection("Events")
                 .whereEqualTo("building", userBuilding)
+                .whereEqualTo("status", "Active")
                 .snapshots()
                 .collect {
                     querySnapshot ->
@@ -143,11 +160,10 @@ class HomeViewModel @Inject constructor(
                                 status = EventStatus.valueOf(document.getString("status") ?: "Active")
                             )
                         }
-                        if(eventList.isNotEmpty()){
-                            _homeState.value = _homeState.value.copy(events = eventList,
+                         _homeState.value = _homeState.value.copy(events = eventList,
                                 isLoading = false)
                             Log.d("Events", "Eventos actualizados ${eventList}")
-                        }
+
                     }
                     catch (e: Exception){
                         _homeState.value = _homeState.value.copy(isLoading = false)

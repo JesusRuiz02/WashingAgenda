@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +30,6 @@ import com.commandiron.wheel_picker_compose.WheelDateTimePicker
 import com.commandiron.wheel_picker_compose.core.TimeFormat
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
 import com.jesusruiz.washingagenda.models.EventModel
-import com.jesusruiz.washingagenda.toLocalDateTime
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 
@@ -42,7 +43,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                 containerColor = MaterialTheme.colorScheme.surface
             ),
             title = {
-                Text(text ="Nuevo Evento", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                Text(text ="Editar Evento", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
             },
             navigationIcon = {
                 TextButton (onClick = {
@@ -108,7 +109,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                             text= "Fin",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = event.startDate!!,
+                        WheelDateTimePicker(startDateTime = event.endDate!!,
                             minDateTime = homeViewModel.currentTime,
                             maxDateTime = homeViewModel.maxTime,
                             timeFormat = TimeFormat.HOUR_24,
@@ -125,9 +126,17 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                             })
 
                     }
-                    Text(modifier = Modifier.padding(start = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
-                    TextButton(modifier = Modifier.padding(start = 20.dp),onClick = { /*TODO*/ }) {
-                        Text(modifier = Modifier.padding(start = 20.dp),text = "Eliminar evento",style = MaterialTheme.typography.titleLarge)
+                    Text(modifier = Modifier.padding(start = 20.dp, top = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
+                    Button (modifier = Modifier
+                        .padding(start = 20.dp, top = 20.dp, end =20.dp, bottom = 20.dp)
+                        .align(Alignment.CenterHorizontally),onClick = { homeViewModel.deleteEvent {
+                        homeViewModel.onAction(HomeInputAction.CancelEditingEvent)
+                    } },
+                        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary))
+                    {
+                        Text(modifier = Modifier.padding(start = 20.dp)
+
+                            ,text = "Eliminar evento",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.tertiary)
                     }
 
 
