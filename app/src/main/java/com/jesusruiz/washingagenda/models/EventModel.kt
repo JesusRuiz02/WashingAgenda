@@ -17,17 +17,6 @@ data class EventModel(
                       var color: Color = Color.Blue
     )
 
-data class FirestoreEvent(
-    val id: String = "",
-    val userID: String = "",
-    val departmentN: String = "",
-    val building: String = "",
-    val startDate: Date? = null,
-    val endDate: Date? = null,
-    val color: String = "#FFFFFFFF",
-    val status: String = "Active"
-)
-
 
 
 

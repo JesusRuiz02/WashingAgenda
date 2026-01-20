@@ -28,7 +28,7 @@ data class HomeUIState(
     var user : UserModel = UserModel(),
     var userUID: String = "",
     val eventStart: LocalDateTime = LocalDateTime.now(),
-    val eventEnd: LocalDateTime = LocalDateTime.now(),
+    val eventEnd: LocalDateTime = LocalDateTime.now().plusHours(1),
     val selectedColor: Color = Color.Blue,
     var isLoading: Boolean = false,
     val editingEvent: EventModel? = null,
@@ -53,7 +53,6 @@ class HomeViewModel @Inject constructor(
 
     val currentTime: LocalDateTime = LocalDateTime.now()
     val maxTime: LocalDateTime = LocalDateTime.now().plusDays(6)
-
 
     private val _homeState = mutableStateOf(HomeUIState())
     val homeState: State<HomeUIState> = _homeState
@@ -117,8 +116,18 @@ class HomeViewModel @Inject constructor(
     }
 
     fun editEvent(onSuccess: () -> Unit){
-        viewModelScope.launch {
 
+        val oldEvent = _homeState.value.editingEvent
+        val user = _homeState.value.user
+        val eventId = "${user.userID}_${_homeState.value.eventStart}"
+        viewModelScope.launch {
+            val editEvent = hashMapOf(
+                "startDate" to _homeState.value.eventStart.toDate(),
+                "endDate" to homeState.value.eventEnd.toDate(),
+                "id" to eventId,
+            )
+            firestore.collection("Events").document(_homeState.value.editingEvent!!.id)
+                .update(editEvent as Map<String, Any>).await()
         }
     }
 

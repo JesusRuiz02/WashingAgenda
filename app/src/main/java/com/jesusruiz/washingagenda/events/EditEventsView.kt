@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import com.commandiron.wheel_picker_compose.WheelDateTimePicker
 import com.commandiron.wheel_picker_compose.core.TimeFormat
 import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
+import com.jesusruiz.washingagenda.datePicker.FullDatePicker
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
@@ -84,21 +85,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                             text= "Inicio",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = event.startDate!!,
-                            minDateTime = homeViewModel.currentTime,
-                            maxDateTime = homeViewModel.maxTime,
-                            timeFormat = TimeFormat.HOUR_24,
-                            textColor = Color.DarkGray,
-                            rowCount = 5,
-                            size = DpSize(300.dp, 150.dp),
-                            selectorProperties = WheelPickerDefaults.selectorProperties(
-                                enabled = true,
-                                shape = RoundedCornerShape(6.dp),
-                                color = Color.White,
-                            ),
-                            onSnappedDateTime = {
-                                    snappedDateTime ->  homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(snappedDateTime))
-                            })
+                        FullDatePicker(modifier = Modifier.weight(1f), event.startDate!!.toLocalDate(), event.startDate!!.toLocalTime(), startText = "Inicia")
                     }
                     Row(modifier = Modifier
                         .fillMaxWidth()
@@ -109,21 +96,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                             text= "Fin",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = event.endDate!!,
-                            minDateTime = homeViewModel.currentTime,
-                            maxDateTime = homeViewModel.maxTime,
-                            timeFormat = TimeFormat.HOUR_24,
-                            textColor = Color.DarkGray,
-                            rowCount = 5,
-                            size = DpSize(300.dp, 150.dp),
-                            selectorProperties = WheelPickerDefaults.selectorProperties(
-                                enabled = true,
-                                shape = RoundedCornerShape(6.dp),
-                                color = Color.White,
-                            ),
-                            onSnappedDateTime = {
-                                    snappedDateTime -> homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(snappedDateTime))
-                            })
+                        FullDatePicker(modifier = Modifier.weight(1f), event.endDate!!.toLocalDate(), event.endDate!!.toLocalTime())
 
                     }
                     Text(modifier = Modifier.padding(start = 20.dp, top = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)

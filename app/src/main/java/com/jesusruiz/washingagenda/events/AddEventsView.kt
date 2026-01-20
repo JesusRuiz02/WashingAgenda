@@ -27,8 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.commandiron.wheel_picker_compose.WheelDateTimePicker
 import com.commandiron.wheel_picker_compose.core.TimeFormat
+import com.jesusruiz.washingagenda.datePicker.FullDatePicker
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
+import com.jesusruiz.washingagenda.withOutSeconds
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,9 +47,9 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                     },
             navigationIcon = {
                 TextButton (onClick = {
-                    homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.value.isAddingEvent))})
-                {
-                    Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)                }
+                    homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.value.isAddingEvent))})                {
+                    Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)
+                }
             },
             actions = {
                 TextButton(onClick = {
@@ -76,51 +79,40 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                         .fillMaxWidth()
                         .weight(1f),
                         verticalAlignment = Alignment.CenterVertically) {
-                        Text(modifier = Modifier
-                            .padding(start = 20.dp, end = 40.dp) ,
-                            text= "Inicio",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = homeViewModel.currentTime,
-                            minDateTime = homeViewModel.currentTime,
-                            maxDateTime = homeViewModel.maxTime,
-                            timeFormat = TimeFormat.HOUR_24,
-                            textColor = Color.DarkGray,
-                            rowCount = 5,
-                            size = DpSize(300.dp, 150.dp),
-                            selectorProperties = WheelPickerDefaults.selectorProperties(
-                                enabled = true,
-                                shape = RoundedCornerShape(6.dp),
-                                color = Color.White,
-                            ),
-                            onSnappedDateTime = {
-                                snappedDateTime ->  homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(snappedDateTime))
-                            })
+                        FullDatePicker(
+                            modifier = Modifier.weight(1f),
+                            startText = "Inicia",
+                            date = state.value.eventStart.toLocalDate(),
+                            hour = state.value.eventStart.toLocalTime().withOutSeconds(),
+                            onDateChanged = { newDate ->
+                                val newDateTime = LocalDateTime.of(newDate, state.value.eventStart.toLocalTime())
+                                homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
+                            },
+                            onHourChanged = { newTime ->
+                                val newDateTime = LocalDateTime.of(state.value.eventStart.toLocalDate(), newTime)
+                                homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
+                            }
+                        )
+                        
                     }
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
                         verticalAlignment = Alignment.CenterVertically) {
-                        Text(modifier = Modifier
-                            .padding(start = 20.dp, end = 60.dp) ,
-                            text= "Fin",
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.secondary)
-                        WheelDateTimePicker(startDateTime = homeViewModel.currentTime,
-                            minDateTime = homeViewModel.currentTime,
-                            maxDateTime = homeViewModel.maxTime,
-                            timeFormat = TimeFormat.HOUR_24,
-                            textColor = Color.DarkGray,
-                            rowCount = 5,
-                            size = DpSize(300.dp, 150.dp),
-                            selectorProperties = WheelPickerDefaults.selectorProperties(
-                                enabled = true,
-                                shape = RoundedCornerShape(6.dp),
-                                color = Color.White,
-                            ),
-                            onSnappedDateTime = {
-                                snappedDateTime -> homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(snappedDateTime))
-                            })
+                        FullDatePicker(
+                            modifier = Modifier.weight(1f),
+                            startText = "Termina",
+                            date = state.value.eventEnd.toLocalDate(),
+                            hour = state.value.eventEnd.toLocalTime().withOutSeconds(),
+                            onDateChanged = { newDate ->
+                                val newDateTime = LocalDateTime.of(newDate, state.value.eventEnd.toLocalTime())
+                                homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
+                            },
+                            onHourChanged = { newTime ->
+                                val newDateTime = LocalDateTime.of(state.value.eventEnd.toLocalDate(), newTime)
+                                homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
+                            }
+                        )
 
                     }
                     Text(modifier = Modifier.padding(start = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
