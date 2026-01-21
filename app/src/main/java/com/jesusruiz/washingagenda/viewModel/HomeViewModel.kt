@@ -169,7 +169,7 @@ class HomeViewModel @Inject constructor(
                                 status = EventStatus.valueOf(document.getString("status") ?: "Active")
                             )
                         }
-                         _homeState.value = _homeState.value.copy(events = eventList,
+                        _homeState.value = _homeState.value.copy(events = eventList,
                                 isLoading = false)
                             Log.d("Events", "Eventos actualizados ${eventList}")
 
