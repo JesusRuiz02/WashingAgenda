@@ -6,14 +6,18 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,8 +30,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.commandiron.wheel_picker_compose.WheelTimePicker
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
@@ -39,13 +45,20 @@ import com.jesusruiz.washingagenda.longToLocalDate
 @Composable
 fun FullDatePicker(modifier: Modifier, date: LocalDate, hour: LocalTime, onDateChanged: (LocalDate) -> Unit = {}, onHourChanged: (LocalTime) -> Unit = {}, startText:String = "Inicia"){
     var datePickerStatus by remember { mutableStateOf(DatePickerStatus.Empty) }
-    Box(modifier = modifier
+    Box (modifier = modifier
         .fillMaxWidth()
-        .padding(horizontal = 10.dp)
+        .padding(horizontal = 20.dp)
         .background(color = MaterialTheme.colorScheme.tertiary)
        ){
-        Column {
-            Row(modifier = Modifier.padding(10.dp),) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+               ) {
                 Text(modifier = Modifier
                     .padding(start = 20.dp, end = 20.dp) ,
                     text= startText,
@@ -59,7 +72,7 @@ fun FullDatePicker(modifier: Modifier, date: LocalDate, hour: LocalTime, onDateC
                     }
                 },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.padding(end = 5.dp)) {
+                    modifier = Modifier.padding(start = 5.dp)) {
                     Text(text = date.toString(), color = MaterialTheme.colorScheme.secondary)
                 }
                 Button(shape = RoundedCornerShape(8.dp) ,onClick = {
@@ -68,7 +81,8 @@ fun FullDatePicker(modifier: Modifier, date: LocalDate, hour: LocalTime, onDateC
                     } else{
                         DatePickerStatus.Hour
                     }
-                }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)) {
+                }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    modifier = Modifier.padding(end = 20.dp)) {
 
                     Text(text = hour.toString(), color = MaterialTheme.colorScheme.secondary)
                 }
@@ -110,9 +124,10 @@ fun FullDatePicker(modifier: Modifier, date: LocalDate, hour: LocalTime, onDateC
                 exit = fadeOut() + slideOutVertically(targetOffsetY = { it })
             ) {
                 WheelTimePicker(modifier = Modifier
-                    .padding(horizontal = 10.dp)
+                    .padding(horizontal = 10.dp, vertical = 10.dp)
                     .align(alignment = androidx.compose.ui.Alignment.CenterHorizontally),
                     startTime = hour,
+                    size = DpSize(300.dp, 150.dp),
                     textColor = MaterialTheme.colorScheme.secondary){
                     snapDateTime -> onHourChanged(snapDateTime)
                 }
