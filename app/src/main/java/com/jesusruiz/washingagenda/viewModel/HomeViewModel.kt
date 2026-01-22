@@ -91,6 +91,50 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun userHaveHoursAvailable(onSuccess: () -> Unit, onError: () -> Unit){
+        viewModelScope.launch {
+            try {
+                if(_homeState.value.userUID.isEmpty())
+                    getUserUID()
+                if (_homeState.value.userUID.isNotEmpty() && _homeState.value.user.building.isEmpty()){
+                    getUserById(_homeState.value.userUID)
+                }
+                val user = _homeState.value.user
+                if(user.hours <= 0) onError() else onSuccess()
+            }
+            catch (e: Exception){
+                Log.d("Error", e.toString())
+            }
+        }
+    }
+
+    fun isEventAvailable(onSuccess: () -> Unit, onError: () -> Unit) {
+        viewModelScope.launch {
+            try {
+               if(_homeState.value.events.isEmpty())
+                   getEvents()
+                val events = _homeState.value.events
+                val eventStart = _homeState.value.eventStart
+                val eventEnd = _homeState.value.eventEnd
+                if(eventEnd.isBefore(eventStart)){
+                    onError()
+                    return@launch
+                }
+                for (event in events){
+                    if(eventStart.isBefore(event.endDate) && eventEnd.isAfter(event.startDate)){
+                        onError()
+                        return@launch
+                    }
+                }
+                onSuccess()
+
+
+            }catch (e: Exception){
+                Log.d("Error", e.toString())
+            }
+        }
+    }
+
     fun gettingEventById(id: String){
         for (event in _homeState.value.events){
             if(event.id == id){
