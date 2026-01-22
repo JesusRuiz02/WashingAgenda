@@ -1,8 +1,4 @@
 package com.jesusruiz.washingagenda.events
-import com.commandiron.wheel_picker_compose.core.WheelPickerDefaults
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -10,37 +6,51 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.commandiron.wheel_picker_compose.WheelDateTimePicker
-import com.commandiron.wheel_picker_compose.core.TimeFormat
 import com.jesusruiz.washingagenda.datePicker.FullDatePicker
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 import com.jesusruiz.washingagenda.withOutSeconds
+import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
     val state = homeViewModel.homeState
-    Scaffold(topBar = {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(state.value.errorMessage) {
+        val message = state.value.errorMessage
+        if(!state.value.errorMessage.isNullOrEmpty()){
+            scope.launch {
+                snackbarHostState.showSnackbar(message!!)
+            }
+        }
+        homeViewModel.onErrorMessageShown()
+    }
+
+    Scaffold(
+        snackbarHost = { androidx.compose.material3.SnackbarHost(hostState = snackbarHostState) },
+        topBar = {
         CenterAlignedTopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surface
@@ -56,9 +66,13 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
             },
             actions = {
                 TextButton(onClick = {
-                   homeViewModel.addEvent(){
-                       homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.value.isAddingEvent))
-                   }
+                    homeViewModel.userHaveHoursAvailable(onSuccess = {
+                        homeViewModel.isEventAvailable(onSuccess = {
+                            homeViewModel.addEvent{
+                                homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.value.isAddingEvent))
+                            }
+                        },)
+                    })
                 })
                 {
                     Text(text = "Guardar", color = MaterialTheme.colorScheme.secondary)

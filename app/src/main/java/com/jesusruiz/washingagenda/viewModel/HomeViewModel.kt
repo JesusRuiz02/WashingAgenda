@@ -33,6 +33,7 @@ data class HomeUIState(
     var isLoading: Boolean = false,
     val editingEvent: EventModel? = null,
     val events: List<EventModel> = emptyList(),
+    val errorMessage: String? = null
 )
 
 sealed class HomeInputAction{
@@ -91,7 +92,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun userHaveHoursAvailable(onSuccess: () -> Unit, onError: () -> Unit){
+    fun onErrorMessageShown(){
+        _homeState.value = _homeState.value.copy(errorMessage = null)
+    }
+
+
+
+    fun userHaveHoursAvailable(onSuccess: () -> Unit){
         viewModelScope.launch {
             try {
                 if(_homeState.value.userUID.isEmpty())
@@ -100,7 +107,7 @@ class HomeViewModel @Inject constructor(
                     getUserById(_homeState.value.userUID)
                 }
                 val user = _homeState.value.user
-                if(user.hours <= 0) onError() else onSuccess()
+                if(user.hours <= 0)                 _homeState.value = _homeState.value.copy(errorMessage = "No tienes horas disponibles") else onSuccess()
             }
             catch (e: Exception){
                 Log.d("Error", e.toString())
@@ -108,7 +115,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun isEventAvailable(onSuccess: () -> Unit, onError: () -> Unit) {
+    fun isEventAvailable(onSuccess: () -> Unit) {
         viewModelScope.launch {
             try {
                if(_homeState.value.events.isEmpty())
@@ -117,13 +124,17 @@ class HomeViewModel @Inject constructor(
                 val eventStart = _homeState.value.eventStart
                 val eventEnd = _homeState.value.eventEnd
                 if(eventEnd.isBefore(eventStart)){
-                    onError()
-                    return@launch
+                    _homeState.value = _homeState.value.copy(errorMessage = "Los horarios no son válidos.")
                 }
-                for (event in events){
-                    if(eventStart.isBefore(event.endDate) && eventEnd.isAfter(event.startDate)){
-                        onError()
-                        return@launch
+                for (event in events) {
+                    if (eventStart.isBefore(event.endDate) && eventEnd.isAfter(event.startDate)) {
+                        _homeState.value = _homeState.value.copy(errorMessage = "El horario seleccionado ya está ocupado.")
+                    }
+                    if(eventStart.isBefore(event.startDate) && eventStart.isBefore(event.endDate)){
+                        _homeState.value = _homeState.value.copy(errorMessage = "El horario seleccionado ya está ocupado.")
+                    }
+                    if(eventEnd.isAfter(event.startDate) && eventEnd.isBefore(event.endDate)){
+                        _homeState.value = _homeState.value.copy(errorMessage = "El horario seleccionado ya está ocupado.")
                     }
                 }
                 onSuccess()
@@ -145,7 +156,6 @@ class HomeViewModel @Inject constructor(
 
    fun deleteEvent(onSuccess: () -> Unit){
         viewModelScope.launch {
-
             try {
                 val status = hashMapOf(
                     "status" to "Canceled"
@@ -154,13 +164,13 @@ class HomeViewModel @Inject constructor(
                     .update(status as Map<String, Any>).await()
                 onSuccess()
             } catch (e: Exception) {
+                _homeState.value = _homeState.value.copy(errorMessage = "El evento no se pudo eliminar.")
                 Log.d("Error", e.toString())
             }
         }
     }
 
     fun editEvent(onSuccess: () -> Unit){
-
         val oldEvent = _homeState.value.editingEvent
         val user = _homeState.value.user
         val eventId = "${user.userID}_${_homeState.value.eventStart}"
@@ -192,6 +202,8 @@ class HomeViewModel @Inject constructor(
             firestore
                 .collection("Events")
                 .whereEqualTo("building", userBuilding)
+                .whereGreaterThanOrEqualTo("starDate", currentTime)
+                .whereLessThanOrEqualTo("endDate", maxTime)
                 .whereEqualTo("status", "Active")
                 .snapshots()
                 .collect {

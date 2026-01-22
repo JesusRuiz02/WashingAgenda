@@ -48,6 +48,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
 
 
     Scaffold(
+
         topBar = {
             CenterAlignedTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
