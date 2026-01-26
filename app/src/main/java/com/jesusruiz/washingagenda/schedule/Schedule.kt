@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,7 +8,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -20,9 +23,7 @@ import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.schedule.BasicSchedule
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 import java.time.LocalDate
-
-
-
+import java.time.temporal.ChronoUnit
 
 
 @Composable
@@ -44,6 +45,19 @@ fun Schedule(
     val verticalScrollState = rememberScrollState()
     val horizontalScrollState = rememberScrollState()
 
+    val density = LocalDensity.current
+    LaunchedEffect(Unit) {
+        val sideBarWidth = 56.dp
+
+        val scrollPositionPx = with(density){
+            val sideBarWidthPx = sideBarWidth.toPx()
+            val dayWidthPx = dayWidth.toPx()
+            (pastDaysPreview * dayWidthPx) - sideBarWidthPx
+        }
+
+
+        horizontalScrollState.scrollTo(scrollPositionPx.toInt())
+    }
 
     Column(modifier = Modifier.fillMaxHeight()){
         Row{

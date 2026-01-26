@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.auth.User
 import com.jesusruiz.washingagenda.models.UserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -25,7 +26,9 @@ class AdminViewModel @Inject constructor(
     data class AdminUiState(
         val isLoading : Boolean = false,
         var users: List<UserModel> = emptyList(),
+        var buildingUsers: List<UserModel> = emptyList(),
         var editUser: UserModel = UserModel(),
+        var buildingFilter: String = "All",
         var addUser: UserModel = UserModel(),
         var adminBuildings : Map<String, String> = emptyMap(),
         val editUserErrors: Map<String, String> = emptyMap(),
@@ -39,8 +42,10 @@ class AdminViewModel @Inject constructor(
         data class UsersChanged(val value: List<UserModel>) : AdminInputAction()
         data class NameChanged(val value: String) : AdminInputAction()
         data class DepartmentChanged(val value: String) : AdminInputAction()
-        data class HoursChanged(val value: Int) : AdminInputAction()
+        data class HoursChanged(val value: Float) : AdminInputAction()
         data class BuildingChanged(val value: String) : AdminInputAction()
+        data class BuildingFilterChanged(val value: String) : AdminInputAction()
+        object ClearBuildingFilter: AdminInputAction()
     }
 
     fun onAction(action: AdminInputAction) {
@@ -68,9 +73,17 @@ class AdminViewModel @Inject constructor(
                     editUser = adminState.editUser.copy(building = action.value)
                 )
             }
+            is AdminInputAction.BuildingFilterChanged -> {
+                adminState = adminState.copy(buildingFilter = action.value)
+            }
+            is AdminInputAction.ClearBuildingFilter -> {
+                adminState = adminState.copy(buildingFilter = "All")
+            }
 
         }
     }
+
+
 
     fun saveEditUser(onSuccess: () -> Unit){
        viewModelScope.launch {
@@ -113,12 +126,45 @@ class AdminViewModel @Inject constructor(
         adminState = adminState.copy(editUserErrors = errors)
         return errors.isEmpty()
     }
+
+    fun sendResetPasswordEmail(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                auth.sendPasswordResetEmail(adminState.editUser.email).await()
+                onSuccess()
+            }
+            catch (e: Exception){
+                Log.e("Error", "No se puedo enviar el mensaje")
+                onError("No se pudo enviar el email")
+            }
+
+        }
+    }
+
+    fun gettingUsersByBuilding(){
+        if(adminState.buildingFilter == "All") {
+            adminState = adminState.copy(buildingUsers = adminState.users)
+            return
+        }
+        else{
+            val filterUser:  MutableList<UserModel> = mutableListOf()
+            adminState = adminState.copy(buildingUsers = emptyList())
+            for(user in  adminState.users){
+                if(user.building == adminState.buildingFilter){
+                    filterUser += user
+                }
+            }
+            adminState = adminState.copy(buildingUsers = filterUser)
+        }
+
+    }
     fun addUser(name: String, email: String, password: String, department: String, building: String, onSuccess: () -> Unit ){
         viewModelScope.launch {
             try {
                 val result = auth.createUserWithEmailAndPassword(email, password).await()
                 if(result.user != null)
                 {
+                    result.user!!.sendEmailVerification().await()
                     saveUser(name, department, building)
                     onSuccess()
                     Log.d("Success","The user was added")
@@ -140,7 +186,7 @@ class AdminViewModel @Inject constructor(
             name = name,
             building = building,
             departmentN = department,
-            hours = 10,
+            hours = 10.0f,
             role = "host",
             adminBuilding = emptyList())
         firestore
@@ -219,12 +265,15 @@ class AdminViewModel @Inject constructor(
                        val name = doc.getString("name") ?: "Sin nombre"
                        buildingMaps[id] = name
                    }
+                    buildingMaps["All"] = "Todos"
                     adminState = adminState.copy(adminBuildings = buildingMaps)
 
                 }
             } catch (e: Exception)
             {
-
+                adminState = adminState.copy(adminBuildings = hashMapOf(
+                    "All" to "Todos",
+                ))
             }
         finally {
             adminState = adminState.copy(isLoading = false)

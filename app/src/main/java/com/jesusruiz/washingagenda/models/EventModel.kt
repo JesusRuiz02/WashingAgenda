@@ -20,4 +20,4 @@ data class EventModel(
 
 
 
-enum class EventStatus {Pending, Active, Completed,Canceled}
+enum class EventStatus {Pending, Active, Completed,Canceled,Edited}

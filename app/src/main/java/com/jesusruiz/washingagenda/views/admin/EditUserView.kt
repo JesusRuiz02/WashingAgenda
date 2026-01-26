@@ -88,7 +88,7 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     shape = MaterialTheme.shapes.medium,
                     label = { Text("Horas restantes", color = MaterialTheme.colorScheme.primary) },
                     onValueChange = {
-                        val value = it.toIntOrNull() ?: 0
+                        val value = it.toFloatOrNull() ?: 0.0f
                         adminViewModel.onAction(AdminViewModel.AdminInputAction.HoursChanged(value)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
@@ -106,7 +106,7 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                 ) {
                     OutlinedTextField(
                         label = { Text("Edificio", color = MaterialTheme.colorScheme.primary) },
-                        modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth().menuAnchor(),
+                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth().menuAnchor(),
                         value = state.adminBuildings[state.editUser.building].orEmpty(),
                         shape = MaterialTheme.shapes.medium,
                         onValueChange = { },
@@ -158,7 +158,8 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                         unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
                     )
                 )
-                Button(onClick = { /*TODO*/ },
+                Button(onClick = { adminViewModel.sendResetPasswordEmail(onSuccess = {},
+                    onError = {}) },
                     shape = RoundedCornerShape(10.dp),
                     modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp).fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {

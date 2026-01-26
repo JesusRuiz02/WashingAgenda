@@ -42,11 +42,11 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
         Image(modifier = Modifier.height(110.dp).width(110.dp).padding(20.dp),
             painter = painterResource(id = R.drawable.washing_machine), contentDescription = "Login Icon"
         )
-        OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp).fillMaxWidth(),
+        OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp, top = 10.dp).fillMaxWidth(),
             value = email,
             shape = MaterialTheme.shapes.medium,
             onValueChange = {email = it},
-            label = { Text(text = "Email", color = MaterialTheme.colorScheme.primary
+            label = { Text(text = "Email", color = MaterialTheme.colorScheme.onSecondary
             )},
 
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
@@ -60,7 +60,7 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
             value = password,
             shape = MaterialTheme.shapes.medium,
             onValueChange = {password = it},
-            label = { Text(text = "Password", color = MaterialTheme.colorScheme.primary)},
+            label = { Text(text = "Password", color = MaterialTheme.colorScheme.onSecondary)},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.tertiary,

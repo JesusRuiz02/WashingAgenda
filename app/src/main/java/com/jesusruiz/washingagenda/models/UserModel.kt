@@ -7,4 +7,4 @@ data class UserModel(val userID: String = "",
                      val email: String = "",
                      val building: String = "",
                      val adminBuilding: List<String> = emptyList(),
-                     val hours: Int = 0)
+                     val hours: Float = 0.0f)

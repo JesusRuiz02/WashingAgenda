@@ -16,8 +16,9 @@ class CheckSessionViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ): ViewModel() {
-    fun checkSession(isAdmin:() -> Unit, isUser: () -> Unit, notSessionInit: () -> Unit){
-        if(auth.currentUser?.email.isNullOrEmpty())
+    fun checkSession(isAdmin:() -> Unit, isUser: () -> Unit, notSessionInit: () -> Unit, onEmailNotVerified: () -> Unit){
+        val currentUser = auth.currentUser
+        if(currentUser == null)
         {
             notSessionInit()
             return
@@ -25,6 +26,13 @@ class CheckSessionViewModel @Inject constructor(
         val uid = auth.currentUser?.uid
         viewModelScope.launch {
             try {
+                currentUser.reload().await()
+                val refreshedUser = auth.currentUser!!
+                if(refreshedUser.isEmailVerified){
+                    Log.d("CheckSession", "El usuario ${refreshedUser.email} ha iniciado sesión pero no ha verificado su email.")
+                    onEmailNotVerified()
+                    return@launch
+                }
                 val doc = firestore
                     .collection("Users")
                     .document(uid.toString())

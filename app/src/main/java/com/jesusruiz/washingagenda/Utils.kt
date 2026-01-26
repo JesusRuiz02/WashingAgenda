@@ -11,16 +11,31 @@ import java.time.ZoneId
 import java.util.Date
 
 fun LocalDateTime.toDate(): Date{
-    return Date.from(this.atZone(java.time.ZoneId.systemDefault()).toInstant())
+    return Date.from(this.atZone(ZoneId.systemDefault()).toInstant())
 }
 
 fun Date.toLocalDateTime(): LocalDateTime{
-    return this.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime()
+    return this.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()
 }
 
 fun Color.toHexString(): String {
     return String.format("#%08X", this.toArgb())
 }
+
+fun LocalDateTime.CeilToNextSlot(): LocalDateTime {
+    if (this.minute > 0 && this.minute < 30) {
+        return this.withMinute(30).withSecond(0).withNano(0)
+    } else if(this.minute < 30) {
+        val missingMinuteToAnHour = 60 - this.minute
+        val newTime = this.plusMinutes(missingMinuteToAnHour.toLong())
+        return newTime
+    }
+    else{
+        return this
+    }
+}
+
+
 
 fun String.toComposeColor(): Color {
     return try {

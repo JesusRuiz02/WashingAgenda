@@ -8,8 +8,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
+import com.jesusruiz.washingagenda.CeilToNextSlot
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.models.EventStatus
 import com.jesusruiz.washingagenda.models.UserModel
@@ -20,6 +22,7 @@ import com.jesusruiz.washingagenda.toLocalDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.time.Duration
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -27,13 +30,13 @@ data class HomeUIState(
     var isAddingEvent: Boolean = false,
     var user : UserModel = UserModel(),
     var userUID: String = "",
-    val eventStart: LocalDateTime = LocalDateTime.now(),
-    val eventEnd: LocalDateTime = LocalDateTime.now().plusHours(1),
+    val eventStart: LocalDateTime = LocalDateTime.now().CeilToNextSlot(),
+    val eventEnd: LocalDateTime = LocalDateTime.now().plusHours(1).CeilToNextSlot(),
     val selectedColor: Color = Color.Blue,
     var isLoading: Boolean = false,
     val editingEvent: EventModel? = null,
     val events: List<EventModel> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 )
 
 sealed class HomeInputAction{
@@ -42,6 +45,8 @@ sealed class HomeInputAction{
     data class IsEndDateEventChanged(val value: LocalDateTime): HomeInputAction()
     data class LoadingEventsChanged(val value: Boolean): HomeInputAction()
     data class EditingEventsChanged(val value: EventModel): HomeInputAction()
+    object ClearDatesPicker: HomeInputAction()
+
     object CancelEditingEvent: HomeInputAction()
 }
 
@@ -73,10 +78,12 @@ class HomeViewModel @Inject constructor(
             }
             is HomeInputAction.IsStartDateEventChanged ->
             {
-                _homeState.value = _homeState.value.copy(eventStart = action.value)
+              val value = action.value.CeilToNextSlot()
+                _homeState.value = _homeState.value.copy(eventStart = value)
             }
             is HomeInputAction.IsEndDateEventChanged ->{
-                _homeState.value = _homeState.value.copy(eventEnd = action.value)
+                val value = action.value.CeilToNextSlot()
+                _homeState.value = _homeState.value.copy(eventEnd = value)
             }
             is HomeInputAction.LoadingEventsChanged ->{
                 _homeState.value = _homeState.value.copy(isLoading = action.value)
@@ -87,10 +94,14 @@ class HomeViewModel @Inject constructor(
             is HomeInputAction.CancelEditingEvent ->{
                 _homeState.value = _homeState.value.copy(editingEvent = null)
             }
-
+            is HomeInputAction.ClearDatesPicker ->{
+                _homeState.value = _homeState.value.copy(eventStart =LocalDateTime.now().CeilToNextSlot() ,
+                    eventEnd = LocalDateTime.now().plusHours(1).CeilToNextSlot())
+            }
 
         }
     }
+
 
     fun onErrorMessageShown(){
         _homeState.value = _homeState.value.copy(errorMessage = null)
@@ -98,8 +109,7 @@ class HomeViewModel @Inject constructor(
 
 
 
-    fun userHaveHoursAvailable(onSuccess: () -> Unit){
-        viewModelScope.launch {
+  private suspend fun userHaveHoursAvailable(): Boolean{
             try {
                 if(_homeState.value.userUID.isEmpty())
                     getUserUID()
@@ -107,43 +117,43 @@ class HomeViewModel @Inject constructor(
                     getUserById(_homeState.value.userUID)
                 }
                 val user = _homeState.value.user
-                if(user.hours <= 0)                 _homeState.value = _homeState.value.copy(errorMessage = "No tienes horas disponibles") else onSuccess()
+                val hourDifference = getHourDifference(homeState.value.eventStart, homeState.value.eventEnd)
+                if(hourDifference > user.hours){
+                    _homeState.value = _homeState.value.copy(errorMessage = "No tienes horas disponibles")
+                    return false
+                }
+                return true
             }
             catch (e: Exception){
                 Log.d("Error", e.toString())
+                _homeState.value = _homeState.value.copy(errorMessage = "Ocurrio un error inesperado")
+                return false
             }
-        }
     }
 
-    fun isEventAvailable(onSuccess: () -> Unit) {
-        viewModelScope.launch {
+    private fun isEventAvailable(): Boolean {
             try {
-               if(_homeState.value.events.isEmpty())
-                   getEvents()
                 val events = _homeState.value.events
                 val eventStart = _homeState.value.eventStart
                 val eventEnd = _homeState.value.eventEnd
-                if(eventEnd.isBefore(eventStart)){
+                if(eventEnd.isBefore(eventStart)|| eventEnd.isEqual(eventStart)){
                     _homeState.value = _homeState.value.copy(errorMessage = "Los horarios no son válidos.")
+                    return false
                 }
                 for (event in events) {
                     if (eventStart.isBefore(event.endDate) && eventEnd.isAfter(event.startDate)) {
                         _homeState.value = _homeState.value.copy(errorMessage = "El horario seleccionado ya está ocupado.")
+                        return false
                     }
-                    if(eventStart.isBefore(event.startDate) && eventStart.isBefore(event.endDate)){
-                        _homeState.value = _homeState.value.copy(errorMessage = "El horario seleccionado ya está ocupado.")
-                    }
-                    if(eventEnd.isAfter(event.startDate) && eventEnd.isBefore(event.endDate)){
-                        _homeState.value = _homeState.value.copy(errorMessage = "El horario seleccionado ya está ocupado.")
-                    }
-                }
-                onSuccess()
 
+                }
+                return true
 
             }catch (e: Exception){
-                Log.d("Error", e.toString())
+                Log.e("Error", e.toString())
+                _homeState.value = _homeState.value.copy(errorMessage = "Ocurrio un error inesperado intente de nuevo")
+                return false
             }
-        }
     }
 
     fun gettingEventById(id: String){
@@ -154,14 +164,27 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getHourDifference(startHour: LocalDateTime, endHour: LocalDateTime): Long{
+        val difference = Duration.between(startHour, endHour)
+        var differenceHour = difference.toMinutes()
+        differenceHour /= 60
+        return differenceHour
+
+    }
+
    fun deleteEvent(onSuccess: () -> Unit){
         viewModelScope.launch {
+            val user = _homeState.value.user
+            val event = _homeState.value.editingEvent ?: return@launch
+            val hourDifference = getHourDifference(event.startDate!!, event.endDate!!)
             try {
                 val status = hashMapOf(
                     "status" to "Canceled"
                 )
-                firestore.collection("Events").document(_homeState.value.editingEvent!!.id)
+                firestore.collection("Events").document(event.id)
                     .update(status as Map<String, Any>).await()
+              val userDifference = firestore.collection("Users").document(event.userID)
+                  userDifference.update("hours", FieldValue.increment(hourDifference.toDouble()))
                 onSuccess()
             } catch (e: Exception) {
                 _homeState.value = _homeState.value.copy(errorMessage = "El evento no se pudo eliminar.")
@@ -171,18 +194,31 @@ class HomeViewModel @Inject constructor(
     }
 
     fun editEvent(onSuccess: () -> Unit){
-        val oldEvent = _homeState.value.editingEvent
-        val user = _homeState.value.user
-        val eventId = "${user.userID}_${_homeState.value.eventStart}"
         viewModelScope.launch {
-            val editEvent = hashMapOf(
-                "startDate" to _homeState.value.eventStart.toDate(),
-                "endDate" to homeState.value.eventEnd.toDate(),
-                "id" to eventId,
-            )
-            firestore.collection("Events").document(_homeState.value.editingEvent!!.id)
-                .update(editEvent as Map<String, Any>).await()
+            if(!isEventAvailable()) return@launch
+            if(!userHaveHoursAvailable()) return@launch
+            val oldEvent = _homeState.value.editingEvent?.id
+            if(oldEvent.isNullOrEmpty()) return@launch
+            try{
+                val differenceHour = getHourDifference(_homeState.value.eventStart, _homeState.value.eventEnd)
+                val eventDifference = getHourDifference(_homeState.value.editingEvent!!.startDate!!, _homeState.value.editingEvent!!.endDate!!)
+                val difference = eventDifference - differenceHour
+                val user = _homeState.value.user
+                val userRef = firestore.collection("Users").document(user.userID)
+                firestore.collection("Events").document(oldEvent)
+                    .update("status", "Edited").await()
+                saveEvent(user)
+                    userRef.update("hours", FieldValue.increment(difference)).await()
+            _homeState.value = _homeState.value.copy(editingEvent = null)
+            onSuccess()
+            }
+            catch (e: Exception){
+                _homeState.value = _homeState.value.copy(errorMessage = "Ocurrió un error al guardar los cambios.")
+                Log.e("Error", e.toString())
+            }
+
         }
+
     }
 
     fun getEvents(){
@@ -202,8 +238,7 @@ class HomeViewModel @Inject constructor(
             firestore
                 .collection("Events")
                 .whereEqualTo("building", userBuilding)
-                .whereGreaterThanOrEqualTo("starDate", currentTime)
-                .whereLessThanOrEqualTo("endDate", maxTime)
+                .whereLessThanOrEqualTo("endDate", maxTime.toDate())
                 .whereEqualTo("status", "Active")
                 .snapshots()
                 .collect {
@@ -225,7 +260,7 @@ class HomeViewModel @Inject constructor(
                                 status = EventStatus.valueOf(document.getString("status") ?: "Active")
                             )
                         }
-                         _homeState.value = _homeState.value.copy(events = eventList,
+                            _homeState.value = _homeState.value.copy(events = eventList,
                                 isLoading = false)
                             Log.d("Events", "Eventos actualizados ${eventList}")
 
@@ -242,27 +277,34 @@ class HomeViewModel @Inject constructor(
         _homeState.value = _homeState.value.copy(userUID = auth.currentUser?.uid ?: "" )
     }
     fun addEvent(onSuccess: () -> Unit ){
-        viewModelScope.launch {
-            try {
-                if(_homeState.value.userUID.isEmpty())
-                    getUserUID()
-                var userToSave:UserModel = _homeState.value.user
-                if (userToSave.userID.isEmpty() && _homeState.value.userUID.isNotEmpty()) {
-                    userToSave = getUserById(_homeState.value.userUID) ?: UserModel()
+                viewModelScope.launch {
+                    if(!isEventAvailable()) return@launch
+                    if(!userHaveHoursAvailable()) return@launch
+                        try {
+                            if (_homeState.value.userUID.isEmpty())
+                                getUserUID()
+                            var userToSave: UserModel = _homeState.value.user
+                            val differenceHour = getHourDifference(homeState.value.eventStart, homeState.value.eventEnd)
+                            if (userToSave.userID.isEmpty() && _homeState.value.userUID.isNotEmpty()) {
+                                userToSave = getUserById(_homeState.value.userUID) ?: UserModel()
+                            }
+                            if (userToSave.userID.isNotEmpty()) {
+                                saveEvent(userToSave)
+                              val reference =  firestore.collection("Users").document(userToSave.userID)
+                                reference.update("hours", FieldValue.increment(-differenceHour)).await()
+                                onSuccess()
+                            } else {
+                                Log.d(
+                                    "Error",
+                                    "No se pudo obtener un usuario válido para guardar el evento."
+                                )
+                            }
+                        } catch (e: Exception) {
+                            Log.d("Error", "The user could not be added ${e.message}")
+                        }
                 }
-               if(userToSave.userID.isNotEmpty()){
-                   saveEvent(userToSave)
-                   onSuccess()
-               }else{
-                   Log.d("Error", "No se pudo obtener un usuario válido para guardar el evento.")
-               }
-            }
-            catch (e: Exception)
-            {
-                Log.d("Error", "The user could not be added ${e.message}")
-            }
-        }
     }
+
     suspend fun getUserById(idUser: String): UserModel?{
          return try{
                 val doc = firestore

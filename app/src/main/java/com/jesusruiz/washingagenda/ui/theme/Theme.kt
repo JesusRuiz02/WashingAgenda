@@ -17,16 +17,16 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = greenLight,
-    secondary = darkGreen,
-    tertiary = CleanBackGround,
+    primary = darkBlue, //Lo que más quiere que llame la atencióm (Botones principales)
+    secondary = conFlowerBlue, //Slider, cosas importante pero no tan prominantes
+    tertiary = platinum, //Cosas que quieres que recuerden pero menos importantes
 
-    surface = Color.White.copy(alpha = 0.8f),
-    background = Color.White.copy(alpha = 0.8f),
-    onSecondary = CleanBackGround,
+    surface = darkCoffee,
+    background = darkCoffee,
+    onSecondary = granite,
     onTertiary = CleanBackGround,
-    onBackground = CleanBackGround,
-    onSurface = greenLight
+    onBackground = floralWhite,
+    onSurface = granite,
 )
 /*
 private val LightColorScheme = lightColorScheme(

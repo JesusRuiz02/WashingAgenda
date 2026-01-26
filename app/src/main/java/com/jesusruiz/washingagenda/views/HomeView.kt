@@ -42,6 +42,7 @@ import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
 {
     LaunchedEffect(Unit) {
+        homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
         homeViewModel.getEvents()
     }
     val state by homeViewModel.homeState

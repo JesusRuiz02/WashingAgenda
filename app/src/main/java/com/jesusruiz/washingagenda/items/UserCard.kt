@@ -29,13 +29,13 @@ fun UserCard(name: String, department: String, building: String, hours: Int, onC
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary)
     ) {
         Row(modifier = Modifier.padding(10.dp)) {
-            Text(text = name, color = MaterialTheme.colorScheme.secondary, fontSize = 20.sp)
+            Text(text = name, color = MaterialTheme.colorScheme.onSecondary, fontSize = 20.sp)
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = department, color = MaterialTheme.colorScheme.secondary)
+            Text(text = "Departamento: $department", color = MaterialTheme.colorScheme.onSecondary)
         }
         Row(modifier = Modifier.padding(10.dp)) {
             //
-            Text(text = building, color =  MaterialTheme.colorScheme.secondary)
+            Text(text = "Edificio: $building", color =  MaterialTheme.colorScheme.onSecondary)
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = { onClick()}) {
                 Icon(

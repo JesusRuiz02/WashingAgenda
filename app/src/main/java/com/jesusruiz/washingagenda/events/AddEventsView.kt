@@ -1,4 +1,5 @@
 package com.jesusruiz.washingagenda.events
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,6 +19,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -35,17 +37,19 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
-    val state = homeViewModel.homeState
+    val state by homeViewModel.homeState
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    LaunchedEffect(state.value.errorMessage) {
-        val message = state.value.errorMessage
-        if(!state.value.errorMessage.isNullOrEmpty()){
+    LaunchedEffect(state.errorMessage) {
+        val message = state.errorMessage
+        if(!state.errorMessage.isNullOrEmpty()){
             scope.launch {
                 snackbarHostState.showSnackbar(message!!)
+                homeViewModel.onErrorMessageShown()
             }
+
         }
-        homeViewModel.onErrorMessageShown()
+
     }
 
     Scaffold(
@@ -60,18 +64,16 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                     },
             navigationIcon = {
                 TextButton (onClick = {
-                    homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.value.isAddingEvent))})                {
+                    homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
+                    homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))})                {
                     Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)
                 }
             },
             actions = {
                 TextButton(onClick = {
-                    homeViewModel.userHaveHoursAvailable(onSuccess = {
-                        homeViewModel.isEventAvailable(onSuccess = {
-                            homeViewModel.addEvent{
-                                homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.value.isAddingEvent))
-                            }
-                        },)
+                    homeViewModel.addEvent(onSuccess = {
+                        homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
+                        homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
                     })
                 })
                 {
@@ -100,14 +102,15 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                         FullDatePicker(
                             modifier = Modifier.weight(1f),
                             startText = "Inicia",
-                            date = state.value.eventStart.toLocalDate(),
-                            hour = state.value.eventStart.toLocalTime().withOutSeconds(),
+                            date = state.eventStart.toLocalDate(),
+                            hour = state.eventStart.toLocalTime().withOutSeconds(),
                             onDateChanged = { newDate ->
-                                val newDateTime = LocalDateTime.of(newDate, state.value.eventStart.toLocalTime())
+                                val newDateTime = LocalDateTime.of(newDate, state.eventStart.toLocalTime())
+                                Log.d("Date", newDateTime.toString())
                                 homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
                             },
                             onHourChanged = { newTime ->
-                                val newDateTime = LocalDateTime.of(state.value.eventStart.toLocalDate(), newTime)
+                                val newDateTime = LocalDateTime.of(state.eventStart.toLocalDate(), newTime)
                                 homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
                             }
                         )
@@ -121,14 +124,15 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                         FullDatePicker(
                             modifier = Modifier.weight(1f),
                             startText = "Termina",
-                            date = state.value.eventEnd.toLocalDate(),
-                            hour = state.value.eventEnd.toLocalTime().withOutSeconds(),
+                            date = state.eventEnd.toLocalDate(),
+                            hour = state.eventEnd.toLocalTime().withOutSeconds(),
                             onDateChanged = { newDate ->
-                                val newDateTime = LocalDateTime.of(newDate, state.value.eventEnd.toLocalTime())
+                                val newDateTime = LocalDateTime.of(newDate, state.eventEnd.toLocalTime())
+                                Log.d("Date", newDateTime.toString())
                                 homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
                             },
                             onHourChanged = { newTime ->
-                                val newDateTime = LocalDateTime.of(state.value.eventEnd.toLocalDate(), newTime)
+                                val newDateTime = LocalDateTime.of(state.eventEnd.toLocalDate(), newTime)
                                 homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
                             }
                         )

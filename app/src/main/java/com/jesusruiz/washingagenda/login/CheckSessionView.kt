@@ -1,6 +1,6 @@
 package com.jesusruiz.washingagenda.login
 
-import android.util.Log
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavController
@@ -16,6 +16,10 @@ fun CheckSessionView(navController: NavController, checkSessionViewModel: CheckS
             isUser = {
                 navController.navigate("Home")},
             notSessionInit = {
-                navController.navigate("Login") })
+                navController.navigate("Login") },
+            onEmailNotVerified = {
+                navController.navigate("Login")
+            }
+        )
     }
 }

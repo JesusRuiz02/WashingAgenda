@@ -23,6 +23,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -34,22 +35,29 @@ import com.jesusruiz.washingagenda.datePicker.FullDatePicker
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
+import com.jesusruiz.washingagenda.withOutSeconds
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, event: EventModel){
-    val state = homeViewModel.homeState
+    val state by homeViewModel.homeState
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(event.startDate!!))
+        homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(event.endDate!!))
+    }
 
-    LaunchedEffect(state.value.errorMessage) {
-        val message = state.value.errorMessage
+    LaunchedEffect(state.errorMessage) {
+        val message = state.errorMessage
         if(!message.isNullOrEmpty()){
             scope.launch {
                 snackbarHostState.showSnackbar(message)
+                homeViewModel.onErrorMessageShown()
             }
-            homeViewModel.onErrorMessageShown()
+
         }
 
     }
@@ -66,15 +74,18 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
             },
             navigationIcon = {
                 TextButton (onClick = {
+                    homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
                     homeViewModel.onAction(HomeInputAction.CancelEditingEvent)})
                 {
                     Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)                }
             },
             actions = {
                 TextButton(onClick = {
-                    homeViewModel.editEvent(){
+                    homeViewModel.editEvent(onSuccess = {
+                        homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
+
                         homeViewModel.onAction(HomeInputAction.CancelEditingEvent)
-                    }
+                    })
                 })
                 {
                     Text(text = "Guardar", color = MaterialTheme.colorScheme.secondary)
@@ -103,14 +114,39 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                         .fillMaxWidth()
                         .weight(1f),
                         verticalAlignment = Alignment.CenterVertically) {
-                        FullDatePicker(modifier = Modifier.weight(1f), event.startDate!!.toLocalDate(), event.startDate!!.toLocalTime(), startText = "Inicia")
+                        FullDatePicker(modifier = Modifier.weight(1f),
+                            state.eventStart.toLocalDate(),
+                            state.eventStart.toLocalTime().withOutSeconds(),
+                            startText = "Inicia",
+                            onDateChanged = { newDate ->
+                                val newDateTime = LocalDateTime.of(newDate, state.eventStart.toLocalTime())
+                                homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
+                            },
+                            onHourChanged = {
+                                newHour ->
+                                val newDateTime = LocalDateTime.of(state.eventStart.toLocalDate(), newHour)
+                                homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
+                            })
                     }
                     Row(modifier = Modifier
                         .padding(top = 10.dp)
                         .fillMaxWidth()
                         .weight(1f),
                         verticalAlignment = Alignment.CenterVertically) {
-                        FullDatePicker(modifier = Modifier.weight(1f), event.endDate!!.toLocalDate(), event.endDate!!.toLocalTime())
+                        FullDatePicker(modifier = Modifier.weight(1f),
+                            state.eventEnd.toLocalDate(),
+                            state.eventEnd.toLocalTime().withOutSeconds(),
+                            startText = "Termina",
+                            onDateChanged = { newDate ->
+                                val newDateTime = LocalDateTime.of(newDate, state.eventEnd.toLocalTime())
+                                homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
+                            },
+                            onHourChanged = {
+                                    newHour ->
+                                val newDateTime = LocalDateTime.of(state.eventEnd.toLocalDate(), newHour)
+                                homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
+                            }
+                        )
 
                     }
                     Text(modifier = Modifier.padding(start = 20.dp, top = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
