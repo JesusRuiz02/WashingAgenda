@@ -131,7 +131,7 @@ class HomeViewModel @Inject constructor(
             }
     }
 
-    private fun isEventAvailable(): Boolean {
+    private fun isEventAvailable(isEditing: Boolean = false): Boolean {
             try {
                 val events = _homeState.value.events
                 val eventStart = _homeState.value.eventStart
@@ -141,6 +141,8 @@ class HomeViewModel @Inject constructor(
                     return false
                 }
                 for (event in events) {
+                    if (isEditing && event.id == _homeState.value.editingEvent?.id)
+                        continue
                     if (eventStart.isBefore(event.endDate) && eventEnd.isAfter(event.startDate)) {
                         _homeState.value = _homeState.value.copy(errorMessage = "El horario seleccionado ya está ocupado.")
                         return false
@@ -195,7 +197,7 @@ class HomeViewModel @Inject constructor(
 
     fun editEvent(onSuccess: () -> Unit){
         viewModelScope.launch {
-            if(!isEventAvailable()) return@launch
+            if(!isEventAvailable(isEditing = true)) return@launch
             if(!userHaveHoursAvailable()) return@launch
             val oldEvent = _homeState.value.editingEvent?.id
             if(oldEvent.isNullOrEmpty()) return@launch

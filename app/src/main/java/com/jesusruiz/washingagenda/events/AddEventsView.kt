@@ -65,7 +65,9 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
             navigationIcon = {
                 TextButton (onClick = {
                     homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
-                    homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))})                {
+                    homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                    navController.popBackStack()
+                })                {
                     Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)
                 }
             },
@@ -74,6 +76,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                     homeViewModel.addEvent(onSuccess = {
                         homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
                         homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                        navController.popBackStack()
                     })
                 })
                 {

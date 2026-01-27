@@ -12,6 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.jesusruiz.washingagenda.events.AddEventsView
+import com.jesusruiz.washingagenda.events.EditEventsView
 import com.jesusruiz.washingagenda.login.CheckSessionView
 import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 import com.jesusruiz.washingagenda.viewModel.LoginViewModel
@@ -38,6 +40,13 @@ sealed class Screen(val route: String)
     {
         fun createRoute(userId: String) = "EditUser/$userId"
     }
+
+    data object EditEvent: Screen("EditEvent/{eventId}")
+    {
+        fun createRoute(eventId: String) = "EditEvent/$eventId"
+    }
+
+    data object AddEvent: Screen("AddEvent")
     data object AddUser: Screen("AddUser")
 
 }
@@ -55,9 +64,33 @@ fun NavManager()
             val checkSessionViewModel: CheckSessionViewModel = hiltViewModel()
             CheckSessionView(navController, checkSessionViewModel)
         }
-        composable(Screen.Home.route) {
-            val homeViewModel : HomeViewModel = hiltViewModel()
-            HomeView(navController, homeViewModel)
+
+        navigation(route = "schedule_graph", startDestination = Screen.Home.route){
+            composable(Screen.Home.route) {  backstackEntry ->
+                val parentEntry = remember(backstackEntry) {
+                    navController.getBackStackEntry("schedule_graph")
+                }
+                val homeViewModel : HomeViewModel = hiltViewModel(parentEntry)
+                HomeView(navController, homeViewModel)
+            }
+            composable(Screen.EditEvent.route){
+                backStackEntry ->
+                val eventId = backStackEntry.arguments?.getString("eventId")!!
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("schedule_graph")
+                }
+                val homeViewModel : HomeViewModel = hiltViewModel(parentEntry)
+               // EditEventsView(homeViewModel, navController, homeViewModel )
+            }
+            composable(Screen.AddEvent.route) {
+                 backStackEntry ->
+                val parentEntry = remember(backStackEntry) {
+                    navController.getBackStackEntry("schedule_graph")
+                }
+                val homeViewModel : HomeViewModel = hiltViewModel(parentEntry)
+                AddEventsView(navController, homeViewModel)
+            }
+
         }
 
         navigation(route = "admin_graph", startDestination = Screen.Admin.route)

@@ -41,11 +41,13 @@ import java.time.LocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, event: EventModel){
+fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, eventId: String){
     val state by homeViewModel.homeState
+    val event: EventModel = state.events.find { it.id == eventId }!!
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
+
         homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(event.startDate!!))
         homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(event.endDate!!))
     }
@@ -75,7 +77,8 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
             navigationIcon = {
                 TextButton (onClick = {
                     homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
-                    homeViewModel.onAction(HomeInputAction.CancelEditingEvent)})
+                    homeViewModel.onAction(HomeInputAction.CancelEditingEvent)
+                    navController.popBackStack()})
                 {
                     Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)                }
             },
@@ -83,8 +86,8 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                 TextButton(onClick = {
                     homeViewModel.editEvent(onSuccess = {
                         homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
-
                         homeViewModel.onAction(HomeInputAction.CancelEditingEvent)
+                        navController.popBackStack()
                     })
                 })
                 {

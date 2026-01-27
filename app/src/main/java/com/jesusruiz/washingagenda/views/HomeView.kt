@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jesusruiz.washingagenda.events.AddEventsView
 import com.jesusruiz.washingagenda.R
+import com.jesusruiz.washingagenda.navigation.Screen
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 
@@ -57,7 +58,13 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                 title = { Text("Agenda", color = MaterialTheme.colorScheme.secondary)},
                 navigationIcon = {
                     IconButton(onClick = { homeViewModel.signOut()
-                        navController.popBackStack()}){
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
+                    }){
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.secondary)
                     }
@@ -86,6 +93,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                         pastDaysPreview = 2,
                         onEventClick = { clickedEvent ->
                             homeViewModel.onAction(HomeInputAction.EditingEventsChanged(clickedEvent))
+                            Screen.Edit.createRoute(state.editingEvent!!.id)
                         }
                     )
                     IconButton(
@@ -94,6 +102,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                             .size(75.dp),
                         onClick = {
                             homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                            navController.navigate(Screen.AddEvent.route)
                         }
                     ) {
                         Icon(
@@ -103,29 +112,6 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                             contentDescription = "Add event",
 
                             )
-                    }
-                    AnimatedVisibility(
-                        visible = state.isAddingEvent,
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                        enter = slideInVertically(
-                            tween(300),
-                            initialOffsetY = { fullHeight -> fullHeight }
-                        ),
-                        exit = shrinkOut(tween(500))) {
-                        AddEventsView(navController, homeViewModel)
-                    }
-                    AnimatedVisibility(
-                        visible = state.editingEvent != null,
-                        modifier = Modifier.align(Alignment.BottomCenter),
-                        enter = slideInVertically(
-                            tween(300),
-                            initialOffsetY = { fullHeight -> fullHeight }
-                        ),
-                        exit = shrinkOut(tween(500))) {
-                        state.editingEvent?.let {
-                            editEvent ->
-                            EditEventsView(homeViewModel, navController, editEvent)
-                        }
                     }
                 }
             }
