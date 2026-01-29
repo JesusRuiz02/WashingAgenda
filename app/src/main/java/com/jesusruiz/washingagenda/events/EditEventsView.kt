@@ -1,13 +1,16 @@
 package com.jesusruiz.washingagenda.events
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -28,9 +31,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jesusruiz.washingagenda.datePicker.DatePickerStatus
 import com.jesusruiz.washingagenda.datePicker.FullDatePicker
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
@@ -99,60 +104,65 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
     {
             paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp, alignment = Alignment.Top),
             ) {
+            Spacer(modifier = Modifier.height(16.dp))
             Card (modifier = Modifier
-
                 .align(alignment = Alignment.CenterHorizontally)
-                .background(color = MaterialTheme.colorScheme.tertiary)
-                .fillMaxWidth()
-                .height(300.dp),
-                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.tertiary)
+                .fillMaxWidth(),
+                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background),
+                shape = RoundedCornerShape(16.dp)
             ){
                 Column(modifier = Modifier
-                    .fillMaxHeight()
-                    ,
+                    .padding(vertical = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.Start) {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                        verticalAlignment = Alignment.CenterVertically) {
-                        FullDatePicker(modifier = Modifier.weight(1f),
+                        FullDatePicker(
+                            modifier = Modifier,
                             state.eventStart.toLocalDate(),
                             state.eventStart.toLocalTime().withOutSeconds(),
                             startText = "Inicia",
                             onDateChanged = { newDate ->
-                                val newDateTime = LocalDateTime.of(newDate, state.eventStart.toLocalTime())
-                                homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
+                                val newDateTime =
+                                    LocalDateTime.of(newDate, state.eventStart.toLocalTime())
+                                homeViewModel.onAction(
+                                    HomeInputAction.IsStartDateEventChanged(
+                                        newDateTime
+                                    )
+                                )
                             },
-                            onHourChanged = {
-                                newHour ->
-                                val newDateTime = LocalDateTime.of(state.eventStart.toLocalDate(), newHour)
-                                homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
-                            })
-                    }
-                    Row(modifier = Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth()
-                        .weight(1f),
-                        verticalAlignment = Alignment.CenterVertically) {
-                        FullDatePicker(modifier = Modifier.weight(1f),
-                            state.eventEnd.toLocalDate(),
-                            state.eventEnd.toLocalTime().withOutSeconds(),
-                            startText = "Termina",
-                            onDateChanged = { newDate ->
-                                val newDateTime = LocalDateTime.of(newDate, state.eventEnd.toLocalTime())
-                                homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
+                            onHourChanged = { newHour ->
+                                val newDateTime =
+                                    LocalDateTime.of(state.eventStart.toLocalDate(), newHour)
+                                homeViewModel.onAction(
+                                    HomeInputAction.IsStartDateEventChanged(
+                                        newDateTime
+                                    )
+                                )
                             },
-                            onHourChanged = {
-                                    newHour ->
-                                val newDateTime = LocalDateTime.of(state.eventEnd.toLocalDate(), newHour)
-                                homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
-                            }
+                            initialDatePickerStatus = DatePickerStatus.Hour
                         )
-
-                    }
-                    Text(modifier = Modifier.padding(start = 20.dp, top = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
+                    FullDatePicker(
+                        modifier = Modifier,
+                        state.eventEnd.toLocalDate(),
+                        state.eventEnd.toLocalTime().withOutSeconds(),
+                        startText = "Termina",
+                        onDateChanged = { newDate ->
+                            val newDateTime =
+                                LocalDateTime.of(newDate, state.eventEnd.toLocalTime())
+                            homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
+                        },
+                        onHourChanged = { newHour ->
+                            val newDateTime =
+                                LocalDateTime.of(state.eventEnd.toLocalDate(), newHour)
+                            homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
+                        }
+                    )
+                    Text(modifier = Modifier.padding(all = 20.dp),text = "Horas restantes: ${state.user.hours} ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.tertiary)
+                }
                     Button (modifier = Modifier
                         .padding(start = 20.dp, top = 20.dp, end =20.dp, bottom = 20.dp)
                         .align(Alignment.CenterHorizontally),onClick = { homeViewModel.deleteEvent {
@@ -164,9 +174,6 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
 
                             ,text = "Eliminar evento",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.tertiary)
                     }
-
-
-                }
 
 
             }

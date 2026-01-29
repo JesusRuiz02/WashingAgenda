@@ -18,6 +18,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,12 +46,21 @@ import com.jesusruiz.washingagenda.longToLocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FullDatePicker(modifier: Modifier, date: LocalDate, hour: LocalTime, onDateChanged: (LocalDate) -> Unit = {}, onHourChanged: (LocalTime) -> Unit = {}, startText:String = "Inicia"){
+fun FullDatePicker(modifier: Modifier = Modifier,
+                   date: LocalDate, hour: LocalTime,
+                   onDateChanged: (LocalDate) -> Unit = {}, onHourChanged: (LocalTime) -> Unit = {},
+                   startText:String = "Inicia",
+                   initialDatePickerStatus: DatePickerStatus = DatePickerStatus.Empty
+){
     var datePickerStatus by remember { mutableStateOf(DatePickerStatus.Empty) }
-    Box (modifier = modifier
+    LaunchedEffect(Unit) {
+        datePickerStatus = initialDatePickerStatus
+    }
+    Card (modifier = modifier
         .fillMaxWidth()
-        .padding(horizontal = 20.dp)
-        .background(color = MaterialTheme.colorScheme.tertiary)
+        .padding()
+        .background(MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(16.dp)
        ){
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

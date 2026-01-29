@@ -25,7 +25,7 @@ fun Color.toHexString(): String {
 fun LocalDateTime.CeilToNextSlot(): LocalDateTime {
     if (this.minute > 0 && this.minute < 30) {
         return this.withMinute(30).withSecond(0).withNano(0)
-    } else if(this.minute < 30) {
+    } else if(this.minute > 30) {
         val missingMinuteToAnHour = 60 - this.minute
         val newTime = this.plusMinutes(missingMinuteToAnHour.toLong())
         return newTime
@@ -37,6 +37,7 @@ fun LocalDateTime.CeilToNextSlot(): LocalDateTime {
 
 
 
+
 fun String.toComposeColor(): Color {
     return try {
         Color(this.toColorInt())
@@ -45,10 +46,10 @@ fun String.toComposeColor(): Color {
     }
 }
 
-fun Long.longToLocalDate( zoneId: ZoneId = ZoneId.systemDefault()): LocalDate {
+fun Long.longToLocalDate(): LocalDate {
     require(this  >= 0) { "Epoch milliseconds must be non-negative" }
     return Instant.ofEpochMilli(this)
-        .atZone(zoneId)
+        .atZone(ZoneId.of("UTC"))
         .toLocalDate()
 }
 

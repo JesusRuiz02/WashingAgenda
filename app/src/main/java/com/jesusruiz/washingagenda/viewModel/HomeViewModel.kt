@@ -201,16 +201,21 @@ class HomeViewModel @Inject constructor(
             if(!userHaveHoursAvailable()) return@launch
             val oldEvent = _homeState.value.editingEvent?.id
             if(oldEvent.isNullOrEmpty()) return@launch
-            try{
+
                 val differenceHour = getHourDifference(_homeState.value.eventStart, _homeState.value.eventEnd)
                 val eventDifference = getHourDifference(_homeState.value.editingEvent!!.startDate!!, _homeState.value.editingEvent!!.endDate!!)
                 val difference = eventDifference - differenceHour
+                if(difference== 0L){
+                    _homeState.value.copy(errorMessage = "El evento no ha cambiado.")
+                    return@launch}
+            try{
                 val user = _homeState.value.user
                 val userRef = firestore.collection("Users").document(user.userID)
-                firestore.collection("Events").document(oldEvent)
-                    .update("status", "Edited").await()
-                saveEvent(user)
-                    userRef.update("hours", FieldValue.increment(difference)).await()
+                userRef.update("hours", FieldValue.increment(difference)).await()
+
+                firestore.collection("Events").document(oldEvent).update("startDate", homeState.value.eventStart.toDate(),
+                    "endDate", homeState.value.eventEnd.toDate()).await()
+
             _homeState.value = _homeState.value.copy(editingEvent = null)
             onSuccess()
             }
@@ -329,23 +334,27 @@ class HomeViewModel @Inject constructor(
         }
     private suspend fun saveEvent( user: UserModel)
     {
-        val eventId = "${user.userID}_${_homeState.value.eventStart}"
-       val data = mapOf(
-           "id" to eventId,
-           "userID" to user.userID,
-           "startDate" to _homeState.value.eventStart.toDate(),
-           "endDate" to _homeState.value.eventEnd.toDate(),
-           "color" to _homeState.value.selectedColor.toHexString(),
-           "building" to user.building,
-           "departmentN" to user.departmentN,
-           "status" to "Active"
-       )
-        firestore
-            .collection("Events")
-            .document(eventId)
-            .set(data)
-            .await()
-        Log.d("Success", "User is saved")
+        try {
+            val newEventRef = firestore.collection("Events").document()
+            val eventId = newEventRef.id
+            val data = mapOf(
+                "id" to eventId,
+                "userID" to user.userID,
+                "startDate" to _homeState.value.eventStart.toDate(),
+                "endDate" to _homeState.value.eventEnd.toDate(),
+                "color" to _homeState.value.selectedColor.toHexString(),
+                "building" to user.building,
+                "departmentN" to user.departmentN,
+                "status" to "Active"
+            )
+           newEventRef.set(data).await()
+            Log.d("Success", "User is saved")
+        }
+        catch (e: Exception){
+            _homeState.value = _homeState.value.copy(errorMessage = "Ocurrio un error inesperado, no se guardo el evento")
+            Log.d("Error", e.toString())
+        }
+
     }
 
 

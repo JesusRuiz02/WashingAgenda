@@ -73,14 +73,15 @@ fun NavManager()
                 val homeViewModel : HomeViewModel = hiltViewModel(parentEntry)
                 HomeView(navController, homeViewModel)
             }
-            composable(Screen.EditEvent.route){
+            composable(Screen.EditEvent.route,
+                arguments = listOf(navArgument("eventId"){ type = NavType.StringType})){
                 backStackEntry ->
                 val eventId = backStackEntry.arguments?.getString("eventId")!!
                 val parentEntry = remember(backStackEntry) {
                     navController.getBackStackEntry("schedule_graph")
                 }
                 val homeViewModel : HomeViewModel = hiltViewModel(parentEntry)
-               // EditEventsView(homeViewModel, navController, homeViewModel )
+                EditEventsView(homeViewModel, navController, eventId = eventId )
             }
             composable(Screen.AddEvent.route) {
                  backStackEntry ->

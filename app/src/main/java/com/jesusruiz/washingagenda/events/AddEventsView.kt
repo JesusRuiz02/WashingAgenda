@@ -1,12 +1,17 @@
 package com.jesusruiz.washingagenda.events
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -27,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jesusruiz.washingagenda.datePicker.DatePickerStatus
 import com.jesusruiz.washingagenda.datePicker.FullDatePicker
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
@@ -88,22 +94,21 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
     {
         paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)
-            .fillMaxSize()) {
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(24.dp, alignment = Alignment.Top),
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
             Card(modifier = Modifier
                 .align(alignment = Alignment.CenterHorizontally)
-                .fillMaxWidth()
-                .height(300.dp),
-                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.tertiary)
-
+                .fillMaxWidth(),
+                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.background)
             ){
-                Column(modifier = Modifier.fillMaxHeight(),
+                Column(modifier = Modifier.padding(vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.Start) {
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f),
-                        verticalAlignment = Alignment.CenterVertically) {
                         FullDatePicker(
-                            modifier = Modifier.weight(1f),
                             startText = "Inicia",
                             date = state.eventStart.toLocalDate(),
                             hour = state.eventStart.toLocalTime().withOutSeconds(),
@@ -115,17 +120,10 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                             onHourChanged = { newTime ->
                                 val newDateTime = LocalDateTime.of(state.eventStart.toLocalDate(), newTime)
                                 homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
-                            }
+                            },
+                            initialDatePickerStatus = DatePickerStatus.Hour
                         )
-                        
-                    }
-                    Row(modifier = Modifier
-                        .padding(top = 10.dp)
-                        .fillMaxWidth()
-                        .weight(1f),
-                        verticalAlignment = Alignment.CenterVertically) {
                         FullDatePicker(
-                            modifier = Modifier.weight(1f),
                             startText = "Termina",
                             date = state.eventEnd.toLocalDate(),
                             hour = state.eventEnd.toLocalTime().withOutSeconds(),
@@ -139,12 +137,19 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                                 homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
                             }
                         )
+                    Card(modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surface),
+                        shape = RoundedCornerShape(16.dp),
+                        ) {
+                        Text(
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
+                            text = "Horas restantes:  ${state.user.hours} ",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.tertiary,
 
+                        )
                     }
-                    Text(modifier = Modifier.padding(start = 20.dp),text = "Horas restantes: ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.secondary)
-
-
-
                 }
 
 

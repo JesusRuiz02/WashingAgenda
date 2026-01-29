@@ -93,7 +93,7 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                         pastDaysPreview = 2,
                         onEventClick = { clickedEvent ->
                             homeViewModel.onAction(HomeInputAction.EditingEventsChanged(clickedEvent))
-                            Screen.Edit.createRoute(state.editingEvent!!.id)
+                            navController.navigate(Screen.EditEvent.createRoute(clickedEvent.id))
                         }
                     )
                     IconButton(
