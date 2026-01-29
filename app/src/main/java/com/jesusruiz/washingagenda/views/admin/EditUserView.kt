@@ -32,10 +32,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +50,7 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
     Scaffold(topBar = {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
-            title = {Text(text = "Editar usuario",
+            title = {Text(text = stringResource(R.string.editar_usuario_txt),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.secondary) },
@@ -65,9 +67,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
             Column(Modifier.padding(paddingValues)) {
                 OutlinedTextField(
                     shape = MaterialTheme.shapes.medium,
-                    modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 30.dp)
+                        .fillMaxWidth(),
                     value = state.editUser.name,
-                    label = { Text("Nombre", color = MaterialTheme.colorScheme.primary) },
+                    label = { Text(stringResource(R.string.name_txt), color = MaterialTheme.colorScheme.primary) },
                     supportingText = {
                         state.editUserErrors["name"]?.let {
                             Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -83,10 +87,12 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     )
                 )
                 OutlinedTextField(
-                    modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 30.dp)
+                        .fillMaxWidth(),
                     value = state.editUser.hours.toString(),
                     shape = MaterialTheme.shapes.medium,
-                    label = { Text("Horas restantes", color = MaterialTheme.colorScheme.primary) },
+                    label = { Text(stringResource(R.string.remaining_hours_txt), color = MaterialTheme.colorScheme.primary) },
                     onValueChange = {
                         val value = it.toFloatOrNull() ?: 0.0f
                         adminViewModel.onAction(AdminViewModel.AdminInputAction.HoursChanged(value)) },
@@ -105,8 +111,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     onExpandedChange = { expanded = !expanded }
                 ) {
                     OutlinedTextField(
-                        label = { Text("Edificio", color = MaterialTheme.colorScheme.primary) },
-                        modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth().menuAnchor(),
+                        label = { Text(stringResource(R.string.building_txt), color = MaterialTheme.colorScheme.primary) },
+                        modifier = Modifier
+                            .padding(horizontal = 30.dp, vertical = 10.dp)
+                            .fillMaxWidth()
+                            .menuAnchor(),
                         value = state.adminBuildings[state.editUser.building].orEmpty(),
                         shape = MaterialTheme.shapes.medium,
                         onValueChange = { },
@@ -140,8 +149,10 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     }
                 }
                 OutlinedTextField(
-                    label = { Text("Número de departamento", color = MaterialTheme.colorScheme.primary) },
-                    modifier = Modifier.padding(horizontal = 30.dp).fillMaxWidth(),
+                    label = { Text(stringResource(R.string.department_number_txt), color = MaterialTheme.colorScheme.primary) },
+                    modifier = Modifier
+                        .padding(horizontal = 30.dp)
+                        .fillMaxWidth(),
                     value = state.editUser.departmentN,
                     shape = MaterialTheme.shapes.medium,
                     supportingText = {
@@ -161,9 +172,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                 Button(onClick = { adminViewModel.sendResetPasswordEmail(onSuccess = {},
                     onError = {}) },
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 30.dp, vertical = 5.dp)
+                        .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)) {
-                    Text(text = "Reiniciar contraseña", color = Color.White)
+                    Text(text = stringResource(R.string.reset_password_tx), color = Color.White)
                 }
                 Button(onClick = {
                     if (adminViewModel.validateEditUser())
@@ -171,14 +184,15 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                         adminViewModel.saveEditUser(){
                             navController.popBackStack()
                         }
-                        Log.d("probando", "probando")
                     }
                 },
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.padding(horizontal = 30.dp, vertical = 5.dp).fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(horizontal = 30.dp, vertical = 5.dp)
+                        .fillMaxWidth(),
                     colors = ButtonDefaults.buttonColors(containerColor  = MaterialTheme.colorScheme.secondary))
                 {
-                    Text(text = "Guardar cambios", color = Color.White)
+                    Text(text = stringResource(R.string.save_changes_txt), color = Color.White)
                 }
 
             }

@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -39,14 +40,19 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
     val state = loginVM.uiState
     Column(Modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(100.dp))
-        Image(modifier = Modifier.height(110.dp).width(110.dp).padding(20.dp),
+        Image(modifier = Modifier
+            .height(110.dp)
+            .width(110.dp)
+            .padding(20.dp),
             painter = painterResource(id = R.drawable.washing_machine), contentDescription = "Login Icon"
         )
-        OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp, top = 10.dp).fillMaxWidth(),
+        OutlinedTextField(modifier = Modifier
+            .padding(start = 30.dp, end = 30.dp, top = 10.dp)
+            .fillMaxWidth(),
             value = email,
             shape = MaterialTheme.shapes.medium,
             onValueChange = {email = it},
-            label = { Text(text = "Email", color = MaterialTheme.colorScheme.onSecondary
+            label = { Text(text = stringResource(R.string.email_txt), color = MaterialTheme.colorScheme.onSecondary
             )},
 
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
@@ -56,11 +62,13 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
                 focusedTextColor = MaterialTheme.colorScheme.primary,
                 unfocusedTextColor = MaterialTheme.colorScheme.primary)
         )
-        OutlinedTextField(modifier = Modifier.padding(start = 30.dp, end = 30.dp).fillMaxWidth(),
+        OutlinedTextField(modifier = Modifier
+            .padding(start = 30.dp, end = 30.dp)
+            .fillMaxWidth(),
             value = password,
             shape = MaterialTheme.shapes.medium,
             onValueChange = {password = it},
-            label = { Text(text = "Password", color = MaterialTheme.colorScheme.onSecondary)},
+            label = { Text(text = stringResource(R.string.password_txt), color = MaterialTheme.colorScheme.onSecondary)},
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.tertiary,
@@ -72,11 +80,13 @@ fun LoginView(navController: NavController, loginVM: LoginViewModel){
                 navController.navigate("Admin")},
             { Log.d("home", "home")
                 navController.navigate("Home")})
-            }, modifier = Modifier.padding(top = 30.dp, start = 30.dp, end = 30.dp).fillMaxWidth(),
+            }, modifier = Modifier
+            .padding(top = 30.dp, start = 30.dp, end = 30.dp)
+            .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.secondary
             )) {
-            Text(text = "Login",
+            Text(text = stringResource(R.string.login_txt),
                 style = LocalTextStyle.current.copy(color = Color.White)
             )
 

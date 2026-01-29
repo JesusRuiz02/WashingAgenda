@@ -12,11 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.toComposeColor
 import com.jesusruiz.washingagenda.toDate
@@ -49,7 +51,7 @@ fun BasicEvent(event: EventModel,
             style = MaterialTheme.typography.labelMedium
         )
         Text(
-            text = "Departamento: " + event.departmentN,
+            text = stringResource(R.string.department_txt) + event.departmentN,
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold
         )

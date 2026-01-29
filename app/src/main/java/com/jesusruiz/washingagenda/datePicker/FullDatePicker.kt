@@ -35,10 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.commandiron.wheel_picker_compose.WheelTimePicker
+import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 import java.time.LocalDate
 import java.time.LocalTime
@@ -49,7 +51,7 @@ import com.jesusruiz.washingagenda.longToLocalDate
 fun FullDatePicker(modifier: Modifier = Modifier,
                    date: LocalDate, hour: LocalTime,
                    onDateChanged: (LocalDate) -> Unit = {}, onHourChanged: (LocalTime) -> Unit = {},
-                   startText:String = "Inicia",
+                   startText:String = stringResource(R.string.inicia_txt),
                    initialDatePickerStatus: DatePickerStatus = DatePickerStatus.Empty
 ){
     var datePickerStatus by remember { mutableStateOf(DatePickerStatus.Empty) }

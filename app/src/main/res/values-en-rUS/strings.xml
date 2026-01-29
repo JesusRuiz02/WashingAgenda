@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WashingAgenda</string>
+    <string name="inicia_txt">Start</string>
+    <string name="end_txt">End</string>
+    <string name="remaining_hours_txt">Remaining Hours:</string>
+    <string name="new_event_txt">New Event</string>
+    <string name="cancel_txt">Cancel</string>
+    <string name="save_txt">Save</string>
+    <string name="edit_event_txt">Edit Event</string>
+    <string name="department_txt">Department:</string>
+    <string name="building_txt">Building</string>
+    <string name="add_tenant">Add tenant</string>
+    <string name="name_txt">Name</string>
+    <string name="department_number_txt">Department number</string>
+    <string name="editar_usuario_txt">Edit user</string>
+    <string name="reset_password_tx">Reset password</string>
+    <string name="save_changes_txt">Save changes</string>
+</resources>

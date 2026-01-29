@@ -40,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -66,7 +67,7 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.surface),
-            title = {Text(text = "Admin Panel",color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)},
+            title = {Text(text = stringResource(R.string.admin_panel_txt),color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)},
             navigationIcon ={
                 IconButton(onClick = {
                     adminViewModel.logOut()
@@ -87,7 +88,8 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
             if (state.isLoading)
             {
                 Box(
-                    Modifier.fillMaxSize()
+                    Modifier
+                        .fillMaxSize()
                         .padding(paddingValues)
                 ) {
                     CircularProgressIndicator(
@@ -103,9 +105,12 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
                         onExpandedChange = { expanded = !expanded }
                     ) {
                         OutlinedTextField(
-                            label = { Text("Edificio") },
+                            label = { stringResource(R.string.building_txt) },
                             shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier.padding(horizontal = 30.dp, vertical = 10.dp).fillMaxWidth().menuAnchor(),
+                            modifier = Modifier
+                                .padding(horizontal = 30.dp, vertical = 10.dp)
+                                .fillMaxWidth()
+                                .menuAnchor(),
                             value = state.adminBuildings[state.buildingFilter].orEmpty(),
                             onValueChange = { },
                             readOnly = true,

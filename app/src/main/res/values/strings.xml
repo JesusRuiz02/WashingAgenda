@@ -1,4 +1,23 @@
 <resources>
     <string name="app_name">WashingAgenda</string>
+    <string name="inicia_txt">Inicia</string>
+    <string name="end_txt">Termina</string>
+    <string name="remaining_hours_txt">Horas restantes:</string>
+    <string name="new_event_txt">Nuevo Evento</string>
+    <string name="cancel_txt">Cancelar</string>
+    <string name="save_txt">Guardar</string>
+    <string name="edit_event_txt">Editar Evento</string>
+    <string name="department_txt">Departamento: </string>
+    <string name="building_txt">Edificio: </string>
+    <string name="email_txt" translatable="false">Email</string>
+    <string name="password_txt" translatable="false">Password</string>
+    <string name="login_txt" translatable="false">Login</string>
+    <string name="add_tenant">Agregar Inquilino</string>
+    <string name="name_txt">Nombre</string>
+    <string name="department_number_txt">Número de Departamento</string>
+    <string name="admin_panel_txt" translatable="false">Admin Panel</string>
+    <string name="editar_usuario_txt">Editar usuario</string>
+    <string name="reset_password_tx">Reiniciar contraseña</string>
+    <string name="save_changes_txt">Guardar cambios</string>
 
 </resources>

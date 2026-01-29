@@ -32,9 +32,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.datePicker.DatePickerStatus
 import com.jesusruiz.washingagenda.datePicker.FullDatePicker
 import com.jesusruiz.washingagenda.models.EventModel
@@ -77,7 +79,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                 containerColor = MaterialTheme.colorScheme.surface
             ),
             title = {
-                Text(text ="Editar Evento", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                Text(text = stringResource(R.string.edit_event_txt), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
             },
             navigationIcon = {
                 TextButton (onClick = {
@@ -85,7 +87,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                     homeViewModel.onAction(HomeInputAction.CancelEditingEvent)
                     navController.popBackStack()})
                 {
-                    Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)                }
+                    Text(text = stringResource(R.string.cancel_txt), color = MaterialTheme.colorScheme.secondary)                }
             },
             actions = {
                 TextButton(onClick = {
@@ -96,14 +98,15 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                     })
                 })
                 {
-                    Text(text = "Guardar", color = MaterialTheme.colorScheme.secondary)
+                    Text(text = stringResource(R.string.save_txt), color = MaterialTheme.colorScheme.secondary)
                 }
             }
         )
     })
     {
             paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)
+        Column(modifier = Modifier
+            .padding(paddingValues)
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -124,7 +127,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                             modifier = Modifier,
                             state.eventStart.toLocalDate(),
                             state.eventStart.toLocalTime().withOutSeconds(),
-                            startText = "Inicia",
+                            startText = stringResource(R.string.inicia_txt),
                             onDateChanged = { newDate ->
                                 val newDateTime =
                                     LocalDateTime.of(newDate, state.eventStart.toLocalTime())
@@ -149,7 +152,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                         modifier = Modifier,
                         state.eventEnd.toLocalDate(),
                         state.eventEnd.toLocalTime().withOutSeconds(),
-                        startText = "Termina",
+                        startText = stringResource(R.string.end_txt),
                         onDateChanged = { newDate ->
                             val newDateTime =
                                 LocalDateTime.of(newDate, state.eventEnd.toLocalTime())
@@ -164,7 +167,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
                     Text(modifier = Modifier.padding(all = 20.dp),text = "Horas restantes: ${state.user.hours} ",style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.tertiary)
                 }
                     Button (modifier = Modifier
-                        .padding(start = 20.dp, top = 20.dp, end =20.dp, bottom = 20.dp)
+                        .padding(start = 20.dp, top = 20.dp, end = 20.dp, bottom = 20.dp)
                         .align(Alignment.CenterHorizontally),onClick = { homeViewModel.deleteEvent {
                         homeViewModel.onAction(HomeInputAction.CancelEditingEvent)
                     } },

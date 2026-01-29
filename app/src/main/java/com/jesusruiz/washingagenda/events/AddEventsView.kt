@@ -29,9 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.datePicker.DatePickerStatus
 import com.jesusruiz.washingagenda.datePicker.FullDatePicker
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction
@@ -66,7 +68,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                 containerColor = MaterialTheme.colorScheme.surface
             ),
             title = {
-            Text(text ="Nuevo Evento", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+            Text(text = stringResource(R.string.new_event_txt), fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
                     },
             navigationIcon = {
                 TextButton (onClick = {
@@ -74,7 +76,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                     homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
                     navController.popBackStack()
                 })                {
-                    Text(text = "Cancelar", color = MaterialTheme.colorScheme.secondary)
+                    Text(text = stringResource(R.string.cancel_txt), color = MaterialTheme.colorScheme.secondary)
                 }
             },
             actions = {
@@ -86,14 +88,15 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                     })
                 })
                 {
-                    Text(text = "Guardar", color = MaterialTheme.colorScheme.secondary)
+                    Text(text = stringResource(R.string.save_txt), color = MaterialTheme.colorScheme.secondary)
                 }
             }
         )
     })
     {
         paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)
+        Column(modifier = Modifier
+            .padding(paddingValues)
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -109,12 +112,11 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                     horizontalAlignment = Alignment.Start) {
                         FullDatePicker(
-                            startText = "Inicia",
+                            startText = stringResource(R.string.inicia_txt),
                             date = state.eventStart.toLocalDate(),
                             hour = state.eventStart.toLocalTime().withOutSeconds(),
                             onDateChanged = { newDate ->
                                 val newDateTime = LocalDateTime.of(newDate, state.eventStart.toLocalTime())
-                                Log.d("Date", newDateTime.toString())
                                 homeViewModel.onAction(HomeInputAction.IsStartDateEventChanged(newDateTime))
                             },
                             onHourChanged = { newTime ->
@@ -124,12 +126,11 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                             initialDatePickerStatus = DatePickerStatus.Hour
                         )
                         FullDatePicker(
-                            startText = "Termina",
+                            startText = stringResource(R.string.end_txt),
                             date = state.eventEnd.toLocalDate(),
                             hour = state.eventEnd.toLocalTime().withOutSeconds(),
                             onDateChanged = { newDate ->
                                 val newDateTime = LocalDateTime.of(newDate, state.eventEnd.toLocalTime())
-                                Log.d("Date", newDateTime.toString())
                                 homeViewModel.onAction(HomeInputAction.IsEndDateEventChanged(newDateTime))
                             },
                             onHourChanged = { newTime ->
@@ -144,7 +145,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                         ) {
                         Text(
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
-                            text = "Horas restantes:  ${state.user.hours} ",
+                            text = "${stringResource(R.string.remaining_hours_txt)}  ${state.user.hours} ",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.tertiary,
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jesusruiz.washingagenda.R
@@ -31,11 +32,11 @@ fun UserCard(name: String, department: String, building: String, hours: Int, onC
         Row(modifier = Modifier.padding(10.dp)) {
             Text(text = name, color = MaterialTheme.colorScheme.onSecondary, fontSize = 20.sp)
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = "Departamento: $department", color = MaterialTheme.colorScheme.onSecondary)
+            Text(text = stringResource(R.string.department_txt, department), color = MaterialTheme.colorScheme.onSecondary)
         }
         Row(modifier = Modifier.padding(10.dp)) {
             //
-            Text(text = "Edificio: $building", color =  MaterialTheme.colorScheme.onSecondary)
+            Text(text = stringResource(R.string.building_txt, building), color =  MaterialTheme.colorScheme.onSecondary)
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = { onClick()}) {
                 Icon(
