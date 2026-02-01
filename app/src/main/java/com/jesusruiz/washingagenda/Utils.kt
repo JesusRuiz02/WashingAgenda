@@ -9,6 +9,7 @@ import com.jesusruiz.washingagenda.ui.theme.EventCanceled
 import com.jesusruiz.washingagenda.ui.theme.EventCompleted
 import com.jesusruiz.washingagenda.ui.theme.EventEdited
 import com.jesusruiz.washingagenda.ui.theme.EventPending
+import com.jesusruiz.washingagenda.ui.theme.EventScheduled
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,6 +36,7 @@ fun EventStatus.getColorIDByStatus(): Color{
         EventStatus.Completed -> EventCompleted
         EventStatus.Pending -> EventPending
         EventStatus.Edited -> EventEdited
+        EventStatus.Scheduled -> EventScheduled
     }
 
 }

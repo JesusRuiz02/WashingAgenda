@@ -13,11 +13,11 @@ data class EventModel(
                       val building: String = "",
                       var startDate: LocalDateTime? = null,
                       var endDate: LocalDateTime? = null,
-                      var status: EventStatus = EventStatus.Active,
+                      var status: EventStatus = EventStatus.Pending,
                       var color: Color = Color.Blue
     )
 
 
 
 
-enum class EventStatus {Pending, Active, Completed,Canceled,Edited}
+enum class EventStatus {Pending, Active, Completed,Canceled,Edited,Scheduled}

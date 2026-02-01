@@ -25,6 +25,7 @@ import kotlinx.coroutines.tasks.await
 import java.time.Duration
 import java.time.LocalDateTime
 import javax.inject.Inject
+import kotlin.io.path.exists
 import kotlin.math.roundToInt
 
 data class HomeUIState(
@@ -123,7 +124,7 @@ class HomeViewModel @Inject constructor(
 
     fun enterEditingEvent(onSuccess: () -> Unit){
         if (_homeState.value.editingEvent == null) return
-        if (_homeState.value.editingEvent?.status != EventStatus.Active) return
+        if (_homeState.value.editingEvent?.status != EventStatus.Pending) return
         onSuccess()
     }
 
@@ -375,6 +376,21 @@ class HomeViewModel @Inject constructor(
     {
         try {
             val newEventRef = firestore.collection("Events").document()
+             val building = _homeState.value.user.building
+            if (building.isEmpty()) return
+            val buildingDoc = firestore.collection("Buildings").document(building).get().await()
+            if (!buildingDoc.exists()) {
+                _homeState.value = _homeState.value.copy(errorMessage = "No se encontraron datos para el edificio.")
+                return
+            }
+            val maxHoursPerWeek = buildingDoc.getDouble("maxHoursPerWeek") ?: 0.0
+            var status = ""
+            status = if(_homeState.value.eventStart >= LocalDateTime.now().minusHours(maxHoursPerWeek.toLong())){
+                "Scheduled"
+            } else{
+                "Pending"
+            }
+
             val eventId = newEventRef.id
             val data = mapOf(
                 "id" to eventId,
@@ -383,7 +399,7 @@ class HomeViewModel @Inject constructor(
                 "endDate" to _homeState.value.eventEnd.toDate(),
                 "building" to user.building,
                 "departmentN" to user.departmentN,
-                "status" to "Active"
+                "status" to status
             )
            newEventRef.set(data).await()
             Log.d("Success", "User is saved")
