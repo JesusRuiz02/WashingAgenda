@@ -8,4 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="dark_green">#FF06402B</color>
+    <color name="event_active">#FF27187E</color>
+    <color name="event_canceled">#FFD0021B</color>
+    <color name="event_completed">#FF758BFD</color>
+    <color name="event_pending">#FFF5A623</color>
+    <color name="event_edited">#FF8B8B8B</color>
 </resources>

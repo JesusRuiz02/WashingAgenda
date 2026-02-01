@@ -16,4 +16,5 @@
     <string name="editar_usuario_txt">Edit user</string>
     <string name="reset_password_tx">Reset password</string>
     <string name="save_changes_txt">Save changes</string>
+    <string name="delete_event_txt">Delete event</string>
 </resources>

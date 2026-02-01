@@ -3,6 +3,12 @@ package com.jesusruiz.washingagenda
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.toColorInt
+import com.jesusruiz.washingagenda.models.EventStatus
+import com.jesusruiz.washingagenda.ui.theme.EventActive
+import com.jesusruiz.washingagenda.ui.theme.EventCanceled
+import com.jesusruiz.washingagenda.ui.theme.EventCompleted
+import com.jesusruiz.washingagenda.ui.theme.EventEdited
+import com.jesusruiz.washingagenda.ui.theme.EventPending
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,6 +26,17 @@ fun Date.toLocalDateTime(): LocalDateTime{
 
 fun Color.toHexString(): String {
     return String.format("#%08X", this.toArgb())
+}
+
+fun EventStatus.getColorIDByStatus(): Color{
+    return when (this){
+        EventStatus.Active -> EventActive
+        EventStatus.Canceled -> EventCanceled
+        EventStatus.Completed -> EventCompleted
+        EventStatus.Pending -> EventPending
+        EventStatus.Edited -> EventEdited
+    }
+
 }
 
 fun LocalDateTime.CeilToNextSlot(): LocalDateTime {

@@ -93,7 +93,8 @@ fun AdminPanelView(navController: NavController, adminViewModel: AdminViewModel)
                         .padding(paddingValues)
                 ) {
                     CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier.align(Alignment.Center),
+                        color = MaterialTheme.colorScheme.secondary
                     )
                 }
             }

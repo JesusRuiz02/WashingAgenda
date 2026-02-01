@@ -57,8 +57,11 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
             }
 
         }
-
     }
+    LaunchedEffect(state.eventStart,state.eventEnd) {
+        homeViewModel.getAddPrevisualizationHour()
+    }
+
 
     Scaffold(
         snackbarHost = { androidx.compose.material3.SnackbarHost(hostState = snackbarHostState) },
@@ -74,6 +77,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                 TextButton (onClick = {
                     homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
                     homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                    homeViewModel.onAction(HomeInputAction.ClearPrevisualizationHour)
                     navController.popBackStack()
                 })                {
                     Text(text = stringResource(R.string.cancel_txt), color = MaterialTheme.colorScheme.secondary)
@@ -84,6 +88,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                     homeViewModel.addEvent(onSuccess = {
                         homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
                         homeViewModel.onAction(HomeInputAction.IsAddingEventChange(!state.isAddingEvent))
+                        homeViewModel.onAction(HomeInputAction.ClearPrevisualizationHour)
                         navController.popBackStack()
                     })
                 })
@@ -145,7 +150,7 @@ fun AddEventsView(navController: NavController, homeViewModel: HomeViewModel){
                         ) {
                         Text(
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 20.dp),
-                            text = "${stringResource(R.string.remaining_hours_txt)}  ${state.user.hours} ",
+                            text = "${stringResource(R.string.remaining_hours_txt)}  ${state.previsualizationHour} ",
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.tertiary,
 

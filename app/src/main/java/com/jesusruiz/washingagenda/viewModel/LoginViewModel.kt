@@ -15,30 +15,37 @@ import kotlinx.coroutines.tasks.await
 import java.lang.Exception
 import javax.inject.Inject
 
+data class LoginUiState(
+    var model: String = "",
+    var isAdmin: Boolean = false,
+    var isLoading: Boolean = false,
+    var canSeePassword: Boolean = true
+)
+sealed class LoginInputAction{
+    data class IsAdminChanged(val value: Boolean) : LoginInputAction()
+    data object CanSeePasswordToggle : LoginInputAction()
+}
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) : ViewModel() {
 
-    data class LoginUiState(
-        var model: String = "",
-        var isAdmin: Boolean = false,
-        var isLoading: Boolean = false
-    )
+
 
 
     var uiState by mutableStateOf(LoginUiState())
         private set
 
-    sealed class LoginInputAction{
-        data class IsAdminChanged(val value: Boolean) : LoginInputAction()
-    }
 
     fun onAction(action : LoginInputAction){
         when(action){
             is LoginInputAction.IsAdminChanged -> {
                 print("hola")
+            }
+            is LoginInputAction.CanSeePasswordToggle -> {
+                uiState = uiState.copy(canSeePassword = !uiState.canSeePassword)
             }
         }
     }

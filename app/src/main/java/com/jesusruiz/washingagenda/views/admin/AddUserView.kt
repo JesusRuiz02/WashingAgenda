@@ -16,6 +16,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -51,6 +52,7 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
             Text(text = stringResource(R.string.add_tenant), color = MaterialTheme.colorScheme.secondary)},
         navigationIcon = {
             IconButton(onClick = {
+
                 navController.popBackStack()}){
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
@@ -76,10 +78,11 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
                 onValueChange = {name = it},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.primary,
-                    unfocusedTextColor = MaterialTheme.colorScheme.primary,
-                    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary)
+                    focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary)
             )
             OutlinedTextField(modifier = Modifier
                 .padding(horizontal = 30.dp, vertical = 10.dp)
@@ -90,11 +93,11 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
                 label = { Text(text = stringResource(R.string.email_txt))},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                    focusedTextColor = MaterialTheme.colorScheme.primary,
-                    unfocusedTextColor = MaterialTheme.colorScheme.primary,)
-                )
+                    focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary))
             OutlinedTextField(modifier = Modifier
                 .padding(horizontal = 30.dp, vertical = 10.dp)
                 .fillMaxWidth(),
@@ -104,10 +107,11 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
                 label = { Text(text = stringResource(R.string.password_txt))},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                    focusedTextColor = MaterialTheme.colorScheme.primary,
-                    unfocusedTextColor = MaterialTheme.colorScheme.primary,)
+                    focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary)
             )
             //Boton dropdown menu
             var expanded by remember { mutableStateOf(false) }
@@ -129,13 +133,11 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                        focusedTextColor = MaterialTheme.colorScheme.primary,
-                        unfocusedTextColor = MaterialTheme.colorScheme.primary,
-                    )
+                        focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary)
                 )
                 ExposedDropdownMenu(expanded = expanded,
                     onDismissRequest = { expanded = false }) {
@@ -145,8 +147,10 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
                             onClick = {
                                 building = id
                                 expanded = false
-                            }
-                        )
+                            },
+
+                            )
+
                     }
                 }
             }
@@ -159,10 +163,11 @@ fun AddUserView(navController: NavController, adminViewModel: AdminViewModel)
                 label = { Text(text = stringResource(R.string.department_number_txt))},
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number ),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                    focusedTextColor = MaterialTheme.colorScheme.primary,
-                    unfocusedTextColor = MaterialTheme.colorScheme.primary,)
+                    focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                    unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                    focusedBorderColor = MaterialTheme.colorScheme.secondary)
             )
             Button(modifier = Modifier
                 .align(Alignment.CenterHorizontally)

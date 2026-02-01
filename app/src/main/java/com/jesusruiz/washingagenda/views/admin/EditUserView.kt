@@ -71,7 +71,7 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                         .padding(horizontal = 30.dp)
                         .fillMaxWidth(),
                     value = state.editUser.name,
-                    label = { Text(stringResource(R.string.name_txt), color = MaterialTheme.colorScheme.primary) },
+                    label = { Text(stringResource(R.string.name_txt)) },
                     supportingText = {
                         state.editUserErrors["name"]?.let {
                             Text(text = it, color = MaterialTheme.colorScheme.error)
@@ -80,11 +80,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.NameChanged(it)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
-                    )
+                        focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary)
                 )
                 OutlinedTextField(
                     modifier = Modifier
@@ -92,17 +92,17 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                         .fillMaxWidth(),
                     value = state.editUser.hours.toString(),
                     shape = MaterialTheme.shapes.medium,
-                    label = { Text(stringResource(R.string.remaining_hours_txt), color = MaterialTheme.colorScheme.primary) },
+                    label = { Text(stringResource(R.string.remaining_hours_txt)) },
                     onValueChange = {
                         val value = it.toFloatOrNull() ?: 0.0f
                         adminViewModel.onAction(AdminViewModel.AdminInputAction.HoursChanged(value)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
-                    )
+                        focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary)
                 )
                 //Boton dropdown menu
                 var expanded by remember { mutableStateOf(false) }
@@ -111,7 +111,7 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     onExpandedChange = { expanded = !expanded }
                 ) {
                     OutlinedTextField(
-                        label = { Text(stringResource(R.string.building_txt), color = MaterialTheme.colorScheme.primary) },
+                        label = { Text(stringResource(R.string.building_txt)) },
                         modifier = Modifier
                             .padding(horizontal = 30.dp, vertical = 10.dp)
                             .fillMaxWidth()
@@ -129,11 +129,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                         },
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                            focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
-                        )
+                            focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                            focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                            unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                            unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                            focusedBorderColor = MaterialTheme.colorScheme.secondary)
                     )
                     ExposedDropdownMenu(expanded = expanded,
                         onDismissRequest = { expanded = false }) {
@@ -149,7 +149,7 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     }
                 }
                 OutlinedTextField(
-                    label = { Text(stringResource(R.string.department_number_txt), color = MaterialTheme.colorScheme.primary) },
+                    label = { Text(stringResource(R.string.department_number_txt)) },
                     modifier = Modifier
                         .padding(horizontal = 30.dp)
                         .fillMaxWidth(),
@@ -163,11 +163,11 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                     onValueChange = { adminViewModel.onAction(AdminViewModel.AdminInputAction.DepartmentChanged(it)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        unfocusedBorderColor = MaterialTheme.colorScheme.secondary,
-                        focusedContainerColor = MaterialTheme.colorScheme.tertiary,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.tertiary
-                    )
+                        focusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.tertiary,
+                        unfocusedTextColor = MaterialTheme.colorScheme.tertiary,
+                        focusedBorderColor = MaterialTheme.colorScheme.secondary)
                 )
                 Button(onClick = { adminViewModel.sendResetPasswordEmail(onSuccess = {},
                     onError = {}) },

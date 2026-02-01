@@ -32,11 +32,11 @@ fun UserCard(name: String, department: String, building: String, hours: Int, onC
         Row(modifier = Modifier.padding(10.dp)) {
             Text(text = name, color = MaterialTheme.colorScheme.onSecondary, fontSize = 20.sp)
             Spacer(modifier = Modifier.weight(1f))
-            Text(text = stringResource(R.string.department_txt, department), color = MaterialTheme.colorScheme.onSecondary)
+            Text(text = "${stringResource(R.string.department_txt)}: $department", color = MaterialTheme.colorScheme.onSecondary)
         }
         Row(modifier = Modifier.padding(10.dp)) {
             //
-            Text(text = stringResource(R.string.building_txt, building), color =  MaterialTheme.colorScheme.onSecondary)
+            Text(text = "${stringResource(R.string.building_txt)}: $building", color =  MaterialTheme.colorScheme.onSecondary)
             Spacer(modifier = Modifier.weight(1f))
             IconButton(onClick = { onClick()}) {
                 Icon(

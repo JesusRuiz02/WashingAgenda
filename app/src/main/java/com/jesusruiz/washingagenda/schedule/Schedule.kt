@@ -9,10 +9,15 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.jesusruiz.washingagenda.schedule.BasicDayHeader
 import com.jesusruiz.washingagenda.schedule.BasicEvent
@@ -23,7 +28,7 @@ import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.schedule.BasicSchedule
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
+import java.time.LocalDateTime
 
 
 @Composable
@@ -44,9 +49,10 @@ fun Schedule(
     val maxDateCalendar = today.plusDays(postDaysPreview)
     val verticalScrollState = rememberScrollState()
     val horizontalScrollState = rememberScrollState()
-
+    var scheduleAreaSize by remember { mutableStateOf(IntSize.Zero) }
     val density = LocalDensity.current
-    LaunchedEffect(Unit) {
+    LaunchedEffect(scheduleAreaSize) {
+        if (scheduleAreaSize == IntSize.Zero) return@LaunchedEffect
         val sideBarWidth = 56.dp
 
         val scrollPositionPx = with(density){
@@ -54,8 +60,15 @@ fun Schedule(
             val dayWidthPx = dayWidth.toPx()
             (pastDaysPreview * dayWidthPx) - sideBarWidthPx
         }
+        val verticalScrollPositionPx = with(density){
+            val hourHeightPx = hourHeight.toPx()
+            val hourOfTheDay = LocalDateTime.now().hour
+            val position = hourOfTheDay * hourHeightPx
+            val halfScreenHeight = scheduleAreaSize.height / 2f
+            (position - halfScreenHeight).coerceAtLeast(0f)
+        }
 
-
+        verticalScrollState.scrollTo(verticalScrollPositionPx.toInt())
         horizontalScrollState.scrollTo(scrollPositionPx.toInt())
     }
 
@@ -71,7 +84,8 @@ fun Schedule(
         Row()
         {
             ScheduleSideBar(hourHeight = hourHeight,
-              modifier =  Modifier.verticalScroll(verticalScrollState)
+              modifier =  Modifier
+                  .verticalScroll(verticalScrollState)
                   .width(56.dp)
             )
             BasicSchedule(events = events,

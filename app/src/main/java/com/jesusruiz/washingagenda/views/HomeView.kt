@@ -44,7 +44,6 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
 {
     LaunchedEffect(Unit) {
         homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
-        homeViewModel.getEvents()
     }
     val state by homeViewModel.homeState
 
@@ -93,7 +92,10 @@ fun HomeView(navController: NavController, homeViewModel: HomeViewModel )
                         pastDaysPreview = 2,
                         onEventClick = { clickedEvent ->
                             homeViewModel.onAction(HomeInputAction.EditingEventsChanged(clickedEvent))
-                            navController.navigate(Screen.EditEvent.createRoute(clickedEvent.id))
+                            homeViewModel.enterEditingEvent(onSuccess = {
+                                navController.navigate(Screen.EditEvent.createRoute(clickedEvent.id))
+                            })
+
                         }
                     )
                     IconButton(
