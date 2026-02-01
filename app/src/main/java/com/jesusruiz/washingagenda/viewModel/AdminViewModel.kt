@@ -11,7 +11,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.functions.functions
 import com.jesusruiz.washingagenda.models.UserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -168,6 +167,7 @@ class AdminViewModel @Inject constructor(
         building: String,
         onSuccess: () -> Unit
     ) {
+        Log.d("Success", "User created")
         viewModelScope.launch {
             try {
                 val data = hashMapOf(
@@ -183,7 +183,7 @@ class AdminViewModel @Inject constructor(
                 val res = result.data as Map<*, *>
                 val uid = res["uid"] as String
 
-                saveUser(name, department, building)
+                saveUser(name, department, building, uid, email)
                 onSuccess()
 
                 Log.d("Success", "User created with uid: $uid")
@@ -193,11 +193,10 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveUser(name: String, department: String, building: String)
+    private suspend fun saveUser(name: String, department: String, building: String, uid: String, email: String)
     {
-        val id = auth.currentUser?.uid ?: return
-        val email = auth.currentUser?.email ?: return
-        val user = UserModel(userID = id.toString(),
+
+        val user = UserModel(userID = uid.toString(),
             email = email,
             name = name,
             building = building,
@@ -207,7 +206,7 @@ class AdminViewModel @Inject constructor(
             adminBuilding = emptyList())
         firestore
             .collection("Users")
-            .document(id)
+            .document(uid)
             .set(user)
             .await()
         Log.d("Success", "User is saved")
@@ -252,7 +251,10 @@ class AdminViewModel @Inject constructor(
                     .await()
                 val user = doc.toObject(UserModel::class.java) ?: return@launch
                 val adminBuildings = user.adminBuilding
-                if (adminBuildings.isEmpty()) return@launch
+                if (adminBuildings.isEmpty()) {
+                    adminState = adminState.copy(isLoading = false)
+                    return@launch}
+
                 getUsersByBuilding(adminBuildings)
                 loadBuildingNames(adminBuildings)
 
@@ -302,6 +304,7 @@ class AdminViewModel @Inject constructor(
 
     private suspend fun getUsersByBuilding(buildingsIds: List<String>){
         val users = mutableListOf<UserModel>()
+        Log.d("Users", buildingsIds.toString())
         buildingsIds.chunked(10).forEach {
             chunk ->
             val query = firestore
@@ -310,6 +313,7 @@ class AdminViewModel @Inject constructor(
                 .get()
                 .await()
             users += query.toObjects(UserModel::class.java)
+            Log.d("Users", users.toString())
         }
 
         adminState = adminState.copy(users = users)

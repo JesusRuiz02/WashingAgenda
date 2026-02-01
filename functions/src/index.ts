@@ -9,6 +9,9 @@
 
 import { onSchedule } from "firebase-functions/v2/scheduler";
 import * as admin from "firebase-admin";
+import { onCall, HttpsError } from "firebase-functions/v2/https";
+
+
 
 
 
@@ -16,35 +19,27 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 const db = admin.firestore();
 
-export const createAuthUser = onCall(async (request) => {
+export const createAuthUser = onCall(async (request: any) => {
   const { email, password } = request.data;
 
   if (!email || !password) {
     throw new HttpsError("invalid-argument", "Email y password requeridos");
   }
 
-  try {
-    const user = await admin.auth().createUser({
-      email,
-      password,
-    });
+  const user = await admin.auth().createUser({
+    email,
+    password,
+  });
 
-    const verificationLink =
-      await admin.auth().generateEmailVerificationLink(email);
+  const verificationLink = await admin.auth().generateEmailVerificationLink(email);
 
-
-    return {
-      uid: user.uid,
-      email: user.email,
-      verificationSent: true
-    };
-  } catch (e: any) {
-    if (e.code === "auth/email-already-exists") {
-      throw new HttpsError("already-exists", "Email ya registrado");
-    }
-    throw new HttpsError("internal", e.message);
-  }
+  return {
+    uid: user.uid,
+    email: user.email,
+    verificationSent: true
+  };
 });
+
 
 export const updateUserEverySunday = onSchedule(
     {

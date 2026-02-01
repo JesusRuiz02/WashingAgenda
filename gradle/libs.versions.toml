@@ -54,7 +54,6 @@ firebasefunctionsktx = { group = "com.google.firebase", name = "firebase-functio
 
 
 
-
 [plugins]
 hilt = {id = "com.google.dagger.hilt.android", version.ref = "hiltV"}
 android-application = { id = "com.android.application", version.ref = "agp" }
