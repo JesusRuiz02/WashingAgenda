@@ -18,6 +18,7 @@ hiltCompose = "1.1.0"
 googleServices = "4.4.2"
 firebaseBomV = "34.7.0"
 wheelPickerV = "1.1.11"
+firebaseFunctionsKtx = "21.2.1"
 
 
 
@@ -49,6 +50,7 @@ hilt = {group= "com.google.dagger", name = "hilt-android", version.ref = "hiltV"
 hiltCompiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltV" }
 hiltCompose = {group = "androidx.hilt", name = "hilt-navigation-compose", version.ref="hiltCompose"}
 wheelPicker = {group = "com.github.commandiron", name = "WheelPickerCompose", version.ref = "wheelPickerV" }
+firebasefunctionsktx = { group = "com.google.firebase", name = "firebase-functions-ktx", version.ref = "firebaseFunctionsKtx" }
 
 
 

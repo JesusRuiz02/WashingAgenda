@@ -8,146 +8,209 @@
  */
 
 import { onSchedule } from "firebase-functions/v2/scheduler";
-import * as admin from "firebase-admin"
+import * as admin from "firebase-admin";
+
+
+
 
 admin.initializeApp();
 const db = admin.firestore();
 
+export const createAuthUser = onCall(async (request) => {
+  const { email, password } = request.data;
+
+  if (!email || !password) {
+    throw new HttpsError("invalid-argument", "Email y password requeridos");
+  }
+
+  try {
+    const user = await admin.auth().createUser({
+      email,
+      password,
+    });
+
+    const verificationLink =
+      await admin.auth().generateEmailVerificationLink(email);
+
+
+    return {
+      uid: user.uid,
+      email: user.email,
+      verificationSent: true
+    };
+  } catch (e: any) {
+    if (e.code === "auth/email-already-exists") {
+      throw new HttpsError("already-exists", "Email ya registrado");
+    }
+    throw new HttpsError("internal", e.message);
+  }
+});
+
 export const updateUserEverySunday = onSchedule(
-        {
-            schedule: "59 23 * * 0",
-            timeZone: "America/Mexico_City"
-        },
+    {
+        schedule: "59 23 * * 0",
+        timeZone: "America/Mexico_City"
+    },
     async () => {
-        const snapshot = await db.collection("Users").get();
-               let updated = 0;
-               let batch = db.batch();
-               let bathCount = 0;
+        const buildingsSnapshot = await db.collection("Building").get();
+        const buildingsDataMap = new Map<string, number>();
 
-               for(const doc of snapshot.docs){
-                    batch.update(doc.ref,
-                        {
-                            hours: 10,
-                        });
+        buildingsSnapshot.forEach((doc) => {
+            const data = doc.data();
+            const buildingId = doc.id;
+            const maxHoursPerWeek = data.maxHoursPerWeek;
 
-                    bathCount++;
-                    updated++;
-                    if(bathCount === 500){
-                        await batch.commit();
-                        batch = db.batch();
-                        bathCount = 0;
-                    }
-                   }
-                   if(bathCount > 0){
-                    await batch.commit();
-                   }
-               console.log('Actualizados ${updated} documentos');
+            if (maxHoursPerWeek !== undefined && typeof maxHoursPerWeek === 'number') {
+                buildingsDataMap.set(buildingId, maxHoursPerWeek);
+            }
+        });
+
+        const usersSnapshot = await db.collection("Users").get();
+        let updated = 0;
+        let batch = db.batch();
+        let batchCount = 0;
+
+        for (const doc of usersSnapshot.docs) {
+            const userData = doc.data();
+            const userBuildingId = userData.building;
+
+            if (userBuildingId && buildingsDataMap.has(userBuildingId)) {
+                const newHours = buildingsDataMap.get(userBuildingId);
+
+                batch.update(doc.ref, {
+                    washHours: newHours,
+                });
+
+                updated++;
+                batchCount++;
+            } else {
+                console.log(`Usuario ${doc.id} pertenece a un edificio (${userBuildingId}) sin datos de horas.`);
+            }
+
+            if (batchCount === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCount = 0;
+            }
         }
-    )
 
+        if (batchCount > 0) {
+            await batch.commit();
+        }
+        console.log(`Actualizados ${updated} documentos de usuarios.`);
+    }
+);
 
-
-
-export const updateEventEverySunday = onSchedule(
-        {
-            schedule: "59 23 * * 0",
-            timeZone: "America/Mexico_City"
-        },
+export const updateEventEveryHour = onSchedule(
+    {
+        schedule: "00 * * * *",
+        timeZone: "America/Mexico_City"
+    },
     async () => {
+        const buildingsSnapshot = await db.collection("Building").get();
+        const buildingsCancellationMap = new Map<string, number>();
+
+        buildingsSnapshot.forEach((doc) => {
+            const data = doc.data();
+            const windowHourTolerance = data.windowHourTolerance;
+
+            if (windowHourTolerance !== undefined && typeof windowHourTolerance === 'number') {
+                buildingsCancellationMap.set(doc.id, windowHourTolerance);
+            }
+        });
+
         const snapshot = await db.collection("Events").get();
-               let updated = 0;
-               let batch = db.batch();
-               let bathCount = 0;
+        let updated = 0;
+        let batch = db.batch();
+        let batchCount = 0;
 
-               for(const doc of snapshot.docs){
-                   const data = doc.data();
-                    if(!data.endDate)
-                    {
-                        continue;
-                    }
-                    const endDate = data.endDate.toDate();
-                    const newStatus = endDate < new Date() ? "Completed" : "Active";
+        for (const doc of snapshot.docs) {
+            const data = doc.data();
+            if (!data.endDate || !data.startDate) {
+                continue;
+            }
+            if (data.status === "Canceled") {
+                continue;
+            }
 
-                    batch.update(doc.ref,
-                        {
-                            status: newStatus,
-                        });
+            const endDate = data.endDate.toDate();
+            const startDate = data.startDate.toDate();
+            const now = new Date();
 
-                    bathCount++;
-                    updated++;
-                    if(bathCount === 500){
-                        await batch.commit();
-                        batch = db.batch();
-                        bathCount = 0;
-                    }
-                   }
-                   if(bathCount > 0){
-                    await batch.commit();
-                   }
-               console.log('Actualizados ${updated} documentos');
+            const buildingId = data.building;
+            const cancelWindowHours = buildingsCancellationMap.get(buildingId) || 0;
+
+            const startDatePlusOneHour = new Date(startDate.getTime());
+            startDatePlusOneHour.setHours(startDate.getHours() + cancelWindowHours);
+
+            let newStatus = "";
+            if (endDate < now) {
+                newStatus = "Completed";
+            } else if (startDate <= now) {
+                newStatus = "Active";
+            } else if (startDatePlusOneHour <= now) {
+                newStatus = "Scheduled";
+            }
+
+            if (newStatus == "" || newStatus == data.status) {
+                continue;
+            }
+
+            batch.update(doc.ref, {
+                status: newStatus,
+            });
+
+            batchCount++;
+            updated++;
+            if (batchCount === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCount = 0;
+            }
         }
-    );
+        if (batchCount > 0) {
+            await batch.commit();
+        }
+        console.log(`Actualizados ${updated} documentos`);
+    }
+);
 
-export const deletedOldEvents =  onSchedule(
+export const deletedOldEvents = onSchedule(
     {
         schedule: "59 23 * * 0",
         timeZone: "America/Mexico_City",
-      },
-      async () => {
+    },
+    async () => {
         const oneMonthAgo = new Date();
         oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-        const oneMonthAgoTs =
-          admin.firestore.Timestamp.fromDate(oneMonthAgo);
-
+        const oneMonthAgoTs = admin.firestore.Timestamp.fromDate(oneMonthAgo);
 
         const snapshot = await db
-          .collection("events")
-          .where("endDate", "<", oneMonthAgoTs)
-          .get();
+            .collection("Events")
+            .where("endDate", "<", oneMonthAgoTs)
+            .get();
 
         let deleted = 0;
         let batch = db.batch();
         let batchCount = 0;
 
         for (const doc of snapshot.docs) {
-          batch.delete(doc.ref);
-          deleted++;
-          batchCount++;
+            batch.delete(doc.ref);
+            deleted++;
+            batchCount++;
 
-          if (batchCount === 500) {
-            await batch.commit();
-            batch = db.batch();
-            batchCount = 0;
-          }
+            if (batchCount === 500) {
+                await batch.commit();
+                batch = db.batch();
+                batchCount = 0;
+            }
         }
 
         if (batchCount > 0) {
-          await batch.commit();
+            await batch.commit();
         }
 
         console.log(`Eliminados ${deleted} eventos antiguos`);
-      }
-    );
-
-
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+    }
+);
