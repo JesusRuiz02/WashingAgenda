@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-                WashingAgendaTheme(){
+                WashingAgendaTheme{
                     Surface(modifier = Modifier.fillMaxSize()) {
                         NavManager()
                     }

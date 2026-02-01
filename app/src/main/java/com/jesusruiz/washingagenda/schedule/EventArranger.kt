@@ -1,7 +1,6 @@
 package com.jesusruiz.washingagenda.schedule
 
 import com.jesusruiz.washingagenda.models.EventModel
-import com.jesusruiz.washingagenda.toLocalDateTime
 import kotlin.math.max
 
 data class VisualEvent(

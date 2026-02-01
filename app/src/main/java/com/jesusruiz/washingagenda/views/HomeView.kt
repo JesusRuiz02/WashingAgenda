@@ -3,12 +3,7 @@ package com.jesusruiz.washingagenda.views
 
 
 import Schedule
-import com.jesusruiz.washingagenda.events.EditEventsView
 import androidx.compose.runtime.getValue
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -31,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.jesusruiz.washingagenda.events.AddEventsView
 import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.navigation.Screen
 import com.jesusruiz.washingagenda.viewModel.HomeInputAction

@@ -1,7 +1,6 @@
 package com.jesusruiz.washingagenda.views.admin
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -181,7 +180,7 @@ fun EditUserView(idUser: String, navController : NavController, adminViewModel: 
                 Button(onClick = {
                     if (adminViewModel.validateEditUser())
                     {
-                        adminViewModel.saveEditUser(){
+                        adminViewModel.saveEditUser{
                             navController.popBackStack()
                         }
                     }

@@ -1,6 +1,5 @@
 package com.jesusruiz.washingagenda.schedule
 
-import android.R
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn

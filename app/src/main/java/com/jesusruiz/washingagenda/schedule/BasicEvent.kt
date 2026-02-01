@@ -20,10 +20,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.jesusruiz.washingagenda.R
 import com.jesusruiz.washingagenda.models.EventModel
-import com.jesusruiz.washingagenda.toComposeColor
-import com.jesusruiz.washingagenda.toDate
-import com.jesusruiz.washingagenda.toHexString
-import com.jesusruiz.washingagenda.toLocalDateTime
 import com.jesusruiz.washingagenda.ui.theme.WashingAgendaTheme
 
 import java.time.LocalDateTime

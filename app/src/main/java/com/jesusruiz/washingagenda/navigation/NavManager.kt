@@ -1,10 +1,7 @@
 package com.jesusruiz.washingagenda.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -17,17 +14,13 @@ import com.jesusruiz.washingagenda.events.EditEventsView
 import com.jesusruiz.washingagenda.login.CheckSessionView
 import com.jesusruiz.washingagenda.viewModel.AdminViewModel
 import com.jesusruiz.washingagenda.viewModel.LoginViewModel
-import com.jesusruiz.washingagenda.viewModel.RegisterViewModel
 import com.jesusruiz.washingagenda.views.HomeView
 import com.jesusruiz.washingagenda.login.LoginView
-import com.jesusruiz.washingagenda.models.EventModel
 import com.jesusruiz.washingagenda.viewModel.CheckSessionViewModel
 import com.jesusruiz.washingagenda.viewModel.HomeViewModel
 import com.jesusruiz.washingagenda.views.admin.AddUserView
 import com.jesusruiz.washingagenda.views.admin.AdminPanelView
 import com.jesusruiz.washingagenda.views.admin.EditUserView
-import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
 
 
 sealed class Screen(val route: String)
