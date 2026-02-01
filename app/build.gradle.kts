@@ -71,6 +71,7 @@ dependencies {
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebaseAuth)
     implementation(libs.firebaseFirestore)
+    implementation(libs.firebasefunctionsktx)
 
     implementation(libs.kalendar)
     implementation(libs.kalendarfoundation)

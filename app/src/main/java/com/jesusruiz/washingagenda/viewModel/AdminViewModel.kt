@@ -6,11 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.auth.User
+import com.google.firebase.functions.functions
 import com.jesusruiz.washingagenda.models.UserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -158,20 +160,34 @@ class AdminViewModel @Inject constructor(
         }
 
     }
-    fun addUser(name: String, email: String, password: String, department: String, building: String, onSuccess: () -> Unit ){
+    fun addUser(
+        name: String,
+        email: String,
+        password: String,
+        department: String,
+        building: String,
+        onSuccess: () -> Unit
+    ) {
         viewModelScope.launch {
             try {
-                val result = auth.createUserWithEmailAndPassword(email, password).await()
-                if(result.user != null)
-                {
-                    result.user!!.sendEmailVerification().await()
-                    saveUser(name, department, building)
-                    onSuccess()
-                    Log.d("Success","The user was added")
-                }
-            }
-            catch (e: Exception)
-            {
+                val data = hashMapOf(
+                    "email" to email,
+                    "password" to password
+                )
+
+                val result = Firebase.functions
+                    .getHttpsCallable("createAuthUser")
+                    .call(data)
+                    .await()
+
+                val res = result.data as Map<*, *>
+                val uid = res["uid"] as String
+
+                saveUser(name, department, building)
+                onSuccess()
+
+                Log.d("Success", "User created with uid: $uid")
+            } catch (e: Exception) {
                 Log.d("Error", "The user could not be added ${e.message}")
             }
         }
