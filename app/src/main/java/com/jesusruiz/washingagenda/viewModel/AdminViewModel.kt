@@ -10,7 +10,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import kotlinx.coroutines.tasks.await
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
 import com.jesusruiz.washingagenda.models.UserModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -165,7 +164,7 @@ class AdminViewModel @Inject constructor(
                 if(result.user != null)
                 {
                     result.user!!.sendEmailVerification().await()
-                    saveUser(name, department, building)
+                    saveUser(name, department, building, result.user!!.uid)
                     onSuccess()
                     Log.d("Success","The user was added")
                 }
@@ -177,11 +176,10 @@ class AdminViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveUser(name: String, department: String, building: String)
+    private suspend fun saveUser(name: String, department: String, building: String, uid: String)
     {
-        val id = auth.currentUser?.uid ?: return
         val email = auth.currentUser?.email ?: return
-        val user = UserModel(userID = id.toString(),
+        val user = UserModel(userID = uid.toString(),
             email = email,
             name = name,
             building = building,
@@ -191,7 +189,7 @@ class AdminViewModel @Inject constructor(
             adminBuilding = emptyList())
         firestore
             .collection("Users")
-            .document(id)
+            .document(uid)
             .set(user)
             .await()
         Log.d("Success", "User is saved")
@@ -236,7 +234,9 @@ class AdminViewModel @Inject constructor(
                     .await()
                 val user = doc.toObject(UserModel::class.java) ?: return@launch
                 val adminBuildings = user.adminBuilding
-                if (adminBuildings.isEmpty()) return@launch
+                if (adminBuildings.isEmpty()) {
+                    Log.d("Error", "El usuario no tiene edificios asignados")
+                    return@launch}
                 getUsersByBuilding(adminBuildings)
                 loadBuildingNames(adminBuildings)
 

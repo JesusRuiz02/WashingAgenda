@@ -250,16 +250,19 @@ class HomeViewModel @Inject constructor(
     fun editEvent(onSuccess: () -> Unit){
         viewModelScope.launch {
             if(!isEventAvailable(isEditing = true)) return@launch
-            if(!userHaveHoursAvailable())
-                return@launch
-            if(_homeState.value.previsualizationHour == _homeState.value.user.hours) {
-                _homeState.value.copy(errorMessage = "El evento no ha cambiado.")
+            if(!userHaveHoursAvailable()){
                 return@launch
             }
             val oldEvent = _homeState.value.editingEvent?.id
+            val event = _homeState.value.editingEvent
             if(oldEvent.isNullOrEmpty()) return@launch
+            if(_homeState.value.eventStart.isEqual(event!!.startDate)&& (_homeState.value.eventEnd.isEqual(event.endDate))) {
+                _homeState.value.copy(errorMessage = "El evento no ha cambiado.")
+                return@launch
+            }
             try{
                 val building = _homeState.value.user.building
+
                 if (building.isEmpty()) return@launch
                 val buildingDoc = firestore.collection("Building").document(building).get().await()
                 if (!buildingDoc.exists()) {
@@ -273,6 +276,7 @@ class HomeViewModel @Inject constructor(
                 } else{
                     "Pending"
                 }
+                Log.d("Status", status)
                 val user = _homeState.value.user
                 val userRef = firestore.collection("Users").document(user.userID)
                 userRef.update("hours", _homeState.value.previsualizationHour).await()

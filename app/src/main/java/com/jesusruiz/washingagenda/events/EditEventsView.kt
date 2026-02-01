@@ -1,5 +1,6 @@
 package com.jesusruiz.washingagenda.events
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -92,6 +93,7 @@ fun EditEventsView(homeViewModel: HomeViewModel, navController: NavController, e
             },
             actions = {
                 TextButton(onClick = {
+                    Log.d("Status", "no jalo")
                     homeViewModel.editEvent(onSuccess = {
                         homeViewModel.onAction(HomeInputAction.ClearDatesPicker)
                         homeViewModel.onAction(HomeInputAction.CancelEditingEvent)
