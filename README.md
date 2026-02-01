@@ -31,7 +31,7 @@ The project follows a clean MVVM architecture with well-defined layers:
 
 ##  Screenshots
 Watch the demo https://github.com/user-attachments/assets/9150587f-0ebe-4df5-8334-ddaac49fbe0a
-
+Watch admin view https://github.com/user-attachments/assets/81340e60-c57c-40cf-94f9-edf73d03a525
 
 ##  Author
 **Jesús Ruiz**  
