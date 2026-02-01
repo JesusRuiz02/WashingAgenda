@@ -259,12 +259,25 @@ class HomeViewModel @Inject constructor(
             val oldEvent = _homeState.value.editingEvent?.id
             if(oldEvent.isNullOrEmpty()) return@launch
             try{
+                val building = _homeState.value.user.building
+                if (building.isEmpty()) return@launch
+                val buildingDoc = firestore.collection("Building").document(building).get().await()
+                if (!buildingDoc.exists()) {
+                    _homeState.value = _homeState.value.copy(errorMessage = "No se encontraron datos para el edificio.")
+                    return@launch
+                }
+                val maxHoursPerWeek = buildingDoc.getDouble("maxHoursPerWeek") ?: 0.0
+                var status = ""
+                status = if(_homeState.value.eventStart.isAfter(LocalDateTime.now().minusHours(maxHoursPerWeek.toLong())) && _homeState.value.eventStart.isEqual(LocalDateTime.now().minusHours(maxHoursPerWeek.toLong()))){
+                    "Scheduled"
+                } else{
+                    "Pending"
+                }
                 val user = _homeState.value.user
                 val userRef = firestore.collection("Users").document(user.userID)
                 userRef.update("hours", _homeState.value.previsualizationHour).await()
-
                 firestore.collection("Events").document(oldEvent).update("startDate", homeState.value.eventStart.toDate(),
-                    "endDate", homeState.value.eventEnd.toDate()).await()
+                    "endDate", homeState.value.eventEnd.toDate(), "status", status).await()
 
             _homeState.value = _homeState.value.copy(editingEvent = null)
             onSuccess()
@@ -378,14 +391,14 @@ class HomeViewModel @Inject constructor(
             val newEventRef = firestore.collection("Events").document()
              val building = _homeState.value.user.building
             if (building.isEmpty()) return
-            val buildingDoc = firestore.collection("Buildings").document(building).get().await()
+            val buildingDoc = firestore.collection("Building").document(building).get().await()
             if (!buildingDoc.exists()) {
                 _homeState.value = _homeState.value.copy(errorMessage = "No se encontraron datos para el edificio.")
                 return
             }
             val maxHoursPerWeek = buildingDoc.getDouble("maxHoursPerWeek") ?: 0.0
             var status = ""
-            status = if(_homeState.value.eventStart >= LocalDateTime.now().minusHours(maxHoursPerWeek.toLong())){
+            status = if(_homeState.value.eventStart.isAfter(LocalDateTime.now().minusHours(maxHoursPerWeek.toLong())) && _homeState.value.eventStart.isEqual(LocalDateTime.now().minusHours(maxHoursPerWeek.toLong()))){
                 "Scheduled"
             } else{
                 "Pending"
